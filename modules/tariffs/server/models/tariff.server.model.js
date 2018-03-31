@@ -21,6 +21,11 @@ var TariffSchema = new Schema({
   price: {
     type: Number
   }
+}, {
+  toJSON: {
+    getters: true,
+    setters: true
+  }
 });
 
 // Getter

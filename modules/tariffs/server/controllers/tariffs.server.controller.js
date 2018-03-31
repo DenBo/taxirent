@@ -76,6 +76,7 @@ exports.delete = function (req, res) {
  * List of Tariffs
  */
 exports.list = function (req, res) {
+
   Tariff.find().sort('-activeAfter').exec(function (err, tariffs) {
     if (err) {
       return res.status(422).send({

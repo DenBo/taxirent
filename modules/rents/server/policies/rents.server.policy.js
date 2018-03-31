@@ -39,8 +39,9 @@ exports.invokeRolesPolicies = function () {
 exports.isAllowed = function (req, res, next) {
   var roles = (req.user) ? req.user.roles : ['guest'];
 
-  // If a rent is being processed and the current user created it then allow any manipulation
+  // If a rent is being processed and the current user created it then allow viewing and cancelling
   if (req.rent && req.user && req.rent.user && req.rent.user.id === req.user.id) {
+    // TODO
     return next();
   }
 

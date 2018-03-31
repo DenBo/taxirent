@@ -1,0 +1,16 @@
+<section>
+  <div class="page-header">
+    <h1>Tariffs</h1>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="tariff in vm.tariffs" ui-sref="tariffs.view({ tariffId: tariff._id })" class="list-group-item">
+      <p class="list-group-item-heading">
+          <img alt="Active from" src="/modules/core/client/img/display/time.png" />
+          <span data-ng-bind="tariff.activeAfter"></span>
+            s 
+          <img alt="Price" src="/modules/core/client/img/display/money.png" />
+          <span data-ng-bind="tariff.price"></span> €/s
+        </p>
+    </a>
+  </div>
+</section>

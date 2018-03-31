@@ -1,0 +1,22 @@
+<section>
+  <div class="page-header">
+    <h1>{{vm.tariffGroup._id ? 'Edit Tariff Group' : 'New Tariff Group'}}</h1>
+  </div>
+  <div class="pull-right">
+    <a ng-show="vm.tariffGroup._id" class="btn btn-primary" ng-click="vm.remove()">
+      <i class="glyphicon glyphicon-trash"></i>
+    </a>
+  </div>
+  <div class="col-md-12">
+    <form name="vm.form.tariffGroupForm" class="form-horizontal" ng-submit="vm.save(vm.form.tariffGroupForm.$valid)" novalidate>
+      <fieldset>
+        <div class="form-group" show-errors>
+          <label class="control-label" for="class">Class</label>
+          <input name="class" type="number" ng-model="vm.tariffGroup.class" id="class" class="form-control" placeholder="Class" required autofocus>
+          <div ng-messages="vm.form.tariffGroupForm.class.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Tariff class is required.</p>
+          </div>
+      </fieldset>
+    </form>
+  </div>
+</section>

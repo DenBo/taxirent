@@ -1,0 +1,49 @@
+<section>
+  <div class="page-header">
+    <h1>{{vm.car._id ? 'Edit Car' : 'New Car'}}</h1>
+  </div>
+  <div class="pull-right">
+    <a ng-show="vm.car._id" class="btn btn-primary" ng-click="vm.remove()">
+      <i class="glyphicon glyphicon-trash"></i>
+    </a>
+  </div>
+  <div class="col-md-12">
+    <form name="vm.form.carForm" class="form-horizontal" ng-submit="vm.save(vm.form.carForm.$valid)" novalidate>
+      <fieldset>
+        <div class="form-group" show-errors>
+          <label class="control-label" for="name">Name</label>
+          <input name="name" type="text" ng-model="vm.car.name" id="name" class="form-control" placeholder="Name" required autofocus>
+          <div ng-messages="vm.form.carForm.name.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Car name is required.</p>
+          </div>
+        </div>
+        <div class="form-group" show-errors>
+          <label class="control-label" for="">Max Passengers</label>
+          <input name="maxPassengers" type="number" value="1" min="1" step="1" ng-model="vm.car.maxPassengers" id="maxPassengers" class="form-control" placeholder="Max Passengers" required>
+          <div ng-messages="vm.form.carForm.maxPassengers.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Max passengers is required.</p>
+          </div>
+        </div>
+        <div class="form-group" show-errors>
+          <label class="control-label" for="">Max Speed</label>
+          <input name="maxSpeed" type="number" value="1" min="1" step="1" ng-model="vm.car.maxSpeed" id="maxSpeed" class="form-control" placeholder="Max Speed" required>
+          <div ng-messages="vm.form.carForm.maxSpeed.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Max speed is required.</p>
+          </div>
+        </div>
+        <div class="form-group" show-errors>
+          <label class="control-label" for="">Tariff Class</label>
+          <select name="tariffGroup" ng-model="vm.tariffGroups" id="tariffGroup" class="form-control" placeholder="Tariff Class" required>
+              <option ng-repeat="tariffGroup in vm.tariffGroups" value="{{tariffGroup.id}}">{{tariffGroup.class}}</option>            
+          </select>
+          <div ng-messages="vm.form.carForm.tariffGroup.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Tariff class is required.</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-default">{{vm.car._id ? 'Update' : 'Create'}}</button>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</section>

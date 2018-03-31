@@ -1,0 +1,21 @@
+﻿<section>
+  <div class="page-header">
+    <h1>
+      Tariffs
+      <a class="btn btn-primary pull-right" data-ui-sref="admin.tariffs.create">
+        <i class="glyphicon glyphicon-plus"></i>
+      </a>
+    </h1>
+  </div>
+  <div class="list-group">
+    <a data-ng-repeat="tariff in vm.tariffs | orderBy:'activeAfter'" data-ui-sref="admin.tariffs.edit({tariffId: tariff._id})" class="list-group-item">
+      <p class="list-group-item-heading">
+        <img alt="Active from" src="/modules/core/client/img/display/time.png" />
+        <span data-ng-bind="tariff.activeAfter"></span>
+         s 
+        <img alt="Price" src="/modules/core/client/img/display/money.png" />
+        <span data-ng-bind="tariff.price"></span> €/s
+      </p>
+    </a>
+  </div>
+</section>
