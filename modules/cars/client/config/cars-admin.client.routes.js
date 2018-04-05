@@ -32,7 +32,8 @@
           roles: ['admin']
         },
         resolve: {
-          carResolve: newCar
+          carResolve: newCar,
+          tariffGroupsResolve: getAllTariffGroups
         }
       })
       .state('admin.cars.edit', {
@@ -45,7 +46,8 @@
           pageTitle: '{{ carResolve.title }}'
         },
         resolve: {
-          carResolve: getCar
+          carResolve: getCar,
+          tariffGroupsResolve: getAllTariffGroups
         }
       });
   }
@@ -62,5 +64,11 @@
 
   function newCar(CarsService) {
     return new CarsService();
+  }
+
+  getAllTariffGroups.$inject = ['TariffGroupsService'];
+
+  function getAllTariffGroups(TariffGroupsService) {
+    return TariffGroupsService.query();
   }
 }());

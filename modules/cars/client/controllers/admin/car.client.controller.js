@@ -5,16 +5,20 @@
     .module('cars.admin')
     .controller('CarsAdminController', CarsAdminController);
 
-  CarsAdminController.$inject = ['$scope', '$state', '$window', 'carResolve', 'Authentication', 'Notification'];
+  CarsAdminController.$inject = ['$scope', '$state', '$window', 'carResolve', 'tariffGroupsResolve', 'Authentication', 'Notification'];
 
-  function CarsAdminController($scope, $state, $window, car, Authentication, Notification) {
+  function CarsAdminController($scope, $state, $window, car, tariffGroups, Authentication, Notification) {
     var vm = this;
 
     vm.car = car;
+    vm.tariffGroups = tariffGroups;
     vm.authentication = Authentication;
     vm.form = {};
     vm.remove = remove;
     vm.save = save;
+    // In Angular 1.3+ date must be an actual Date object, not a string representation
+    vm.car.dateManufactured = new Date(vm.car.dateManufactured);
+    // TODO: still throws error on saving (but loads ok now), but seems to save ok
 
     // Remove existing Car
     function remove() {

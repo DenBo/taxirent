@@ -8,12 +8,8 @@
     </h1>
   </div>
   <div class="list-group">
-    <a ng-repeat="car in vm.pagedItems" ui-sref="admin.car({carId: car._id})" class="list-group-item">
+    <a ng-repeat="car in vm.cars" ui-sref="admin.cars.edit({carId: car._id})" class="list-group-item">
       <h4 class="list-group-item-heading" ng-bind="car.name"></h4>
-      <p class="list-group-item-text pull-right small" ng-bind="car.brand"></p>
-      <p class="list-group-item-text" ng-bind="car.model"></p>
     </a>
   </div>
-
-  <uib-pagination boundary-links="true" max-size="8" items-per-page="vm.itemsPerPage" total-items="vm.filterLength" ng-model="vm.currentPage" ng-change="vm.pageChanged()"></uib-pagination>
 </section>

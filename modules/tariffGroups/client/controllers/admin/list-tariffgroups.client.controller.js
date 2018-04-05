@@ -10,6 +10,9 @@
   function TariffGroupsAdminListController(TariffGroupsService, TariffsService) {
     var vm = this;
 
+    // ALTERNATIVE: USE POPULATE FUNCTION IN MONGOOSE to fill ids with objects retrieved from db
+    // Downsides: duplication
+
     const arrayToObject = (arr, keyField) =>
     Object.assign({}, ...arr.map(item => ({ [item[keyField]]: item })));
 

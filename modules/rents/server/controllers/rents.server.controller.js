@@ -14,7 +14,6 @@ var path = require('path'),
 exports.create = function (req, res) {
   var rent = new Rent(req.body);
   rent.customer = req.user;
-  rent.car = req.car;
 
   rent.save(function (err) {
     if (err) {
