@@ -13,7 +13,6 @@ var path = require('path'),
  */
 exports.create = function (req, res) {
   var tariffGroup = new TariffGroup(req.body);
-  tariffGroup.tariff = req.tariff;
 
   tariffGroup.save(function (err) {
     if (err) {
@@ -42,7 +41,8 @@ exports.read = function (req, res) {
 exports.update = function (req, res) {
   var tariffGroup = req.tariffGroup;
 
-  tariffGroup.tariff = req.body.tariff;
+  tariffGroup.class = req.body.class;
+  tariffGroup.tariffs = req.body.tariffs;
 
   tariffGroup.save(function (err) {
     if (err) {

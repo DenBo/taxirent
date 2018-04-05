@@ -12,9 +12,22 @@
       <fieldset>
         <div class="form-group" show-errors>
           <label class="control-label" for="class">Class</label>
-          <input name="class" type="number" ng-model="vm.tariffGroup.class" id="class" class="form-control" placeholder="Class" required autofocus>
+          <input name="class" type="number" value="1" min="1" ng-model="vm.tariffGroup.class" id="class" class="form-control" placeholder="Class" required autofocus>
           <div ng-messages="vm.form.tariffGroupForm.class.$error" role="alert">
             <p class="help-block error-text" ng-message="required">Tariff class is required.</p>
+          </div>
+        </div>
+        <div class="form-group" show-errors>
+          <label class="control-label" for="tariffs">Tariffs</label>
+          <select name="tariffs" multiple="true" size="5" ng-model="vm.tariffGroup.tariffs" id="tariffs" class="form-control" placeholder="Tariffs" required>
+            <option ng-repeat="tariff in vm.tariffs track by $index" value="{{tariff.id}}">Price: <span>{{tariff.price}}</span> €/s Activates at: <span>{{tariff.activeAfter}}</span>s</option> 
+          </select>
+          <div ng-messages="vm.form.tariffGroupForm.tariffs.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Tariff is required.</p>
+          </div>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-default">{{vm.tariffGroup._id ? 'Update' : 'Create'}}</button>
           </div>
       </fieldset>
     </form>

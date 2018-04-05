@@ -5,12 +5,13 @@
     .module('tariffGroups.admin')
     .controller('TariffGroupsAdminController', TariffGroupsAdminController);
 
-  TariffGroupsAdminController.$inject = ['$scope', '$state', '$window', 'tariffGroupResolve', 'Authentication', 'Notification'];
+  TariffGroupsAdminController.$inject = ['$scope', '$state', '$window', 'tariffGroupResolve', 'tariffsResolve', 'Authentication', 'Notification'];
 
-  function TariffGroupsAdminController($scope, $state, $window, tariffGroup, Authentication, Notification) {
+  function TariffGroupsAdminController($scope, $state, $window, tariffGroup, tariffs, Authentication, Notification) {
     var vm = this;
 
     vm.tariffGroup = tariffGroup;
+    vm.tariffs = tariffs;
     vm.authentication = Authentication;
     vm.form = {};
     vm.remove = remove;
@@ -28,6 +29,7 @@
 
     // Save Tariff Group
     function save(isValid) {
+
       if (!isValid) {
         $scope.$broadcast('show-errors-check-validity', 'vm.form.tariffGroupForm');
         return false;

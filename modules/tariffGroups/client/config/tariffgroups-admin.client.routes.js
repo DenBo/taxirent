@@ -32,7 +32,8 @@
           roles: ['admin']
         },
         resolve: {
-          tariffGroupResolve: newTariffGroup
+          tariffGroupResolve: newTariffGroup,
+          tariffsResolve: getAllTariffs
         }
       })
       .state('admin.tariffGroups.edit', {
@@ -45,7 +46,8 @@
           pageTitle: '{{ tariffGroupResolve.title }}'
         },
         resolve: {
-          tariffGroupResolve: getTariffGroup
+          tariffGroupResolve: getTariffGroup,
+          tariffsResolve: getAllTariffs
         }
       });
   }
@@ -62,5 +64,11 @@
 
   function newTariffGroup(TariffGroupsService) {
     return new TariffGroupsService();
+  }
+
+  getAllTariffs.$inject = ['TariffsService'];
+
+  function getAllTariffs(TariffsService) {
+    return TariffsService.query();
   }
 }());

@@ -20,6 +20,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/tariffs/:tariffId',
       permissions: '*'
+    }, {
+      resources: '/api/tariffs/subset',
+      permissions: '*'
     }]
   }]);
 };

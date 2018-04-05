@@ -9,7 +9,7 @@ var path = require('path'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
 /**
- * Create an tariff
+ * Create a tariff
  */
 exports.create = function (req, res) {
   var tariff = new Tariff(req.body);
@@ -78,6 +78,25 @@ exports.delete = function (req, res) {
 exports.list = function (req, res) {
 
   Tariff.find().sort('-activeAfter').exec(function (err, tariffs) {
+    if (err) {
+      return res.status(422).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      res.json(tariffs);
+    }
+  });
+};
+
+/**
+ * Limited list of Tariffs
+ */
+exports.subset = function (req, res) {
+  var idList = req.body.idList;
+
+  Tariff.find({
+    '_id': { $in: idList }
+  }).sort('-activeAfter').exec(function (err, tariffs) {
     if (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)

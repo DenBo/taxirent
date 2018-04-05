@@ -30,7 +30,7 @@ var TariffSchema = new Schema({
 
 // Getter
 TariffSchema.path('price').get(function (num) {
-  return (num / 100).toFixed(2);
+  return (num / 100);
 });
 
 // Setter

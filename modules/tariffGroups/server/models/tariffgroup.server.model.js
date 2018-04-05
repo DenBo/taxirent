@@ -13,7 +13,7 @@ var mongoose = require('mongoose'),
  * Tariff Group Schema
  */
 var TariffGroupSchema = new Schema({
-  tariff: {
+  tariffs: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: 'Tariff',
     required: [true, 'Tariff group must include at least one tariff'],

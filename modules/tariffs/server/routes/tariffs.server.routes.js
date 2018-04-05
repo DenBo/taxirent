@@ -12,6 +12,10 @@ module.exports = function (app) {
     .get(tariffs.list)
     .post(tariffs.create);
 
+  // Tariffs limited collection routes
+  app.route('/api/tariffs/subset').all(tariffsPolicy.isAllowed)
+    .post(tariffs.subset);
+
   // Single tariff routes
   app.route('/api/tariffs/:tariffId').all(tariffsPolicy.isAllowed)
     .get(tariffs.read)
