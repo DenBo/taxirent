@@ -92,7 +92,8 @@ exports.list = function (req, res) {
  * Limited list of Tariffs
  */
 exports.subset = function (req, res) {
-  var idList = req.body.idList;
+
+  var idList = req.body;
 
   Tariff.find({
     '_id': { $in: idList }

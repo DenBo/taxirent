@@ -13,6 +13,16 @@
     }, {
       update: {
         method: 'PUT'
+      },
+      subset: {
+        method: 'POST',
+        params: {
+          tariffId: 'subset'
+        },
+        isArray: true,
+        hasBody: true,
+        requestType: 'json',
+        responseType: 'json'
       }
     });
 

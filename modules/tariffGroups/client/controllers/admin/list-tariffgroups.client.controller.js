@@ -14,10 +14,21 @@
     Object.assign({}, ...arr.map(item => ({ [item[keyField]]: item })));
 
     vm.tariffsById = {};
-    vm.tariffGroups = TariffGroupsService.query();
-    // TODO: only get required tariffs, not all of them to minimize database usage
-    vm.tariffs = TariffsService.query(function () {
-      vm.tariffsById = arrayToObject(angular.fromJson(vm.tariffs), '_id');
+    vm.tariffGroups = TariffGroupsService.query(function () {
+
+      // Create a set of id's of tariffs that need to be retrieved from db
+      const tariffIdsToRetrieve = new Set();
+      for (var i = 0; i < vm.tariffGroups.length; i++) {
+        for (var j = 0; j < vm.tariffGroups[i].tariffs.length; j++) {
+          tariffIdsToRetrieve.add(vm.tariffGroups[i].tariffs[j]);
+        }
+      }
+
+      // Convert array to map for easier access, make tarif id map key and tarif object map value
+      // TODO: only get required tariffs, not all of them to minimize database usage
+      vm.tariffs = TariffsService.subset({}, Array.from(tariffIdsToRetrieve), function () {
+        vm.tariffsById = arrayToObject(angular.fromJson(vm.tariffs), '_id');
+      });
     });
   }
 }());
