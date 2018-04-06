@@ -81,7 +81,7 @@ exports.delete = function (req, res) {
  * List of cars
  */
 exports.list = function (req, res) {
-  Car.find().sort('-name').exec(function (err, cars) {
+  Car.find().sort('-name').populate('tariffGroup', 'class').exec(function (err, cars) {
     if (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)

@@ -11,5 +11,9 @@
     var vm = this;
 
     vm.cars = CarsService.query();
+
+    function convertDate(date) {
+      return new Date(date);
+    }
   }
 }());

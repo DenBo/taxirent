@@ -20,7 +20,7 @@ var CarSchema = new Schema({
   },
   image: {
     type: String,
-    default: '/modules/core/client/img/car/stock.png'
+    default: ''
   },
   dateManufactured: {
     type: Date,

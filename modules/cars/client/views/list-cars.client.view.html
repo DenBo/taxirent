@@ -2,9 +2,36 @@
   <div class="page-header">
     <h1>Cars</h1>
   </div>
-  <div class="list-group">
-    <a ng-repeat="car in vm.cars" ui-sref="cars.view({ carId: car._id })" class="list-group-item">
-      <h4 class="list-group-item-heading" ng-bind="car.name"></h4>
-    </a>
-  </div>
+  <div class="card-deck">
+
+      <div class="card" ng-repeat="car in vm.cars">
+
+          <div ui-sref="cars.view({ carId: car._id })">
+  
+          <img class="card-img-top" style="width:100px" ng-if="car.image == ''" src="/modules/cars/client/img/car/stock.png" alt="Card image cap">
+  
+          <img class="card-img-top" style="width:100px" ng-if="car.image != ''" ng-src="/modules/cars/client/img/car/uploads/{{car.image}}" alt="Card image cap">
+  
+          <div class="card-body">
+  
+            <h5 class="card-title" ng-bind="car.name"></h5>
+  
+            <p class="card-text"><img style="width:20px" src="/modules/core/client/img/display/passenger.png" alt="Passengers:"> <span ng-bind="car.maxPassengers"></span></p>
+  
+            <p class="card-text"><img style="width:20px" src="/modules/core/client/img/display/speed.png" alt="Speed:"> <span ng-bind="car.maxSpeed"></span> km/h</p>
+  
+            <p class="card-text"><img style="width:20px" src="/modules/core/client/img/display/manufactured.png" alt="Manufactured:"> <span ng-bind="car.dateManufactured | date:'MM.dd.yyyy'"></span></p>
+  
+            <p class="card-text"><img style="width:20px" src="/modules/core/client/img/display/money.png" alt="Tariff class:"> class <span ng-bind="car.tariffGroup.class"></span></p>
+  
+          </div>
+  
+          </div>
+          <div class="card-footer">
+            <small class="text-muted">Status: </small><a href="#" class="btn-success"><small>Available</small></a>
+          </div>
+  
+        </div>
+
+    </div>
 </section>
