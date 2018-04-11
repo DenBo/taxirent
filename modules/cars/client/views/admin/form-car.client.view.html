@@ -55,7 +55,7 @@
 
         <div class="form-group" show-errors>
           <label class="control-label" for="tariffGroup">Tariff group</label>
-          <select name="tariffGroup" ng-model="vm.car.tariffGroup" id="tariffGroup" class="form-control" placeholder="Tariff group" required>
+          <select name="tariffGroup" ng-model="vm.car.tariffGroup._id" id="tariffGroup" class="form-control" placeholder="Tariff group" required>
               <option ng-repeat="tariffGroup in vm.tariffGroups" value="{{tariffGroup._id}}">{{tariffGroup.class}}</option>            
           </select>
           <div ng-messages="vm.form.carForm.tariffGroup.$error" role="alert">

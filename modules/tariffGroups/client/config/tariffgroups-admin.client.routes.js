@@ -69,6 +69,6 @@
   getAllTariffs.$inject = ['TariffsService'];
 
   function getAllTariffs(TariffsService) {
-    return TariffsService.query();
+    return TariffsService.query().$promise;
   }
 }());

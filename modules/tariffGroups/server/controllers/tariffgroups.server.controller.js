@@ -98,15 +98,17 @@ exports.tariffGroupByID = function (req, res, next, id) {
     });
   }
 
-  TariffGroup.findById(id).populate('tariffs').exec(function (err, tariffGroup) {
-    if (err) {
-      return next(err);
-    } else if (!tariffGroup) {
-      return res.status(404).send({
-        message: 'No tariffGroup with that identifier has been found'
-      });
-    }
-    req.tariffGroup = tariffGroup;
-    next();
-  });
+  TariffGroup
+    .findById(id)
+    .exec(function (err, tariffGroup) {
+      if (err) {
+        return next(err);
+      } else if (!tariffGroup) {
+        return res.status(404).send({
+          message: 'No tariffGroup with that identifier has been found'
+        });
+      }
+      req.tariffGroup = tariffGroup;
+      next();
+    });
 };

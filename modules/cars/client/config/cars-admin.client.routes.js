@@ -69,6 +69,6 @@
   getAllTariffGroups.$inject = ['TariffGroupsService'];
 
   function getAllTariffGroups(TariffGroupsService) {
-    return TariffGroupsService.query();
+    return TariffGroupsService.query().$promise;
   }
 }());

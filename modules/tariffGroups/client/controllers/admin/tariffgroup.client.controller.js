@@ -29,7 +29,6 @@
 
     // Save Tariff Group
     function save(isValid) {
-
       if (!isValid) {
         $scope.$broadcast('show-errors-check-validity', 'vm.form.tariffGroupForm');
         return false;

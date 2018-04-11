@@ -39,8 +39,8 @@
       }
 
       vm.rent.dateStarted = new Date();
-      vm.rent.customer = vm.authentication.user._id;
-      vm.rent.car = vm.car._id;
+      vm.rent.customer = vm.authentication.user;   // In case of new rent
+      vm.rent.car = vm.car;   // In case of new rent
       vm.rent.duration = getDuration(vm.duration);
 
       // Create a new rent, or update the current instance
