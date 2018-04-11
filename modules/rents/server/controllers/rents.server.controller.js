@@ -84,19 +84,19 @@ exports.delete = function (req, res) {
  */
 exports.list = function (req, res) {
   Rent
-  .find()
-  .sort('-dateStarted')
-  .populate('car', 'name')
-  .populate('customer', 'displayName')
-  .exec(function (err, rents) {
-    if (err) {
-      return res.status(422).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.json(rents);
-    }
-  });
+    .find()
+    .sort('-dateStarted')
+    .populate('car', 'name')
+    .populate('customer', 'displayName')
+    .exec(function (err, rents) {
+      if (err) {
+        return res.status(422).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        res.json(rents);
+      }
+    });
 };
 
 /**
@@ -111,18 +111,18 @@ exports.rentByID = function (req, res, next, id) {
   }
 
   Rent
-  .findById(id)
-  .populate('car', 'name')
-  .populate('customer', 'displayName')
-  .exec(function (err, rent) {
-    if (err) {
-      return next(err);
-    } else if (!rent) {
-      return res.status(404).send({
-        message: 'No rent with that identifier has been found'
-      });
-    }
-    req.rent = rent;
-    next();
-  });
+    .findById(id)
+    .populate('car', ['name', 'tariffGroup'])
+    .populate('customer', 'displayName')
+    .exec(function (err, rent) {
+      if (err) {
+        return next(err);
+      } else if (!rent) {
+        return res.status(404).send({
+          message: 'No rent with that identifier has been found'
+        });
+      }
+      req.rent = rent;
+      next();
+    });
 };

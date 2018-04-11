@@ -1,5 +1,26 @@
 <section>
   <div class="page-header">
+    <img class="img-thumbnail user-profile-picture" ng-if="vm.car.image == ''" src="/modules/cars/client/img/car/stock.png">
+    <img class="img-thumbnail user-profile-picture" ng-if="vm.car.image != ''" ng-src="/modules/cars/client/img/car/uploads/{{car.image}}">
+ 
     <h1 ng-bind="vm.car.name"></h1>
+
+    <h3>Profit:</h3>
   </div>
+ 
+  <div>
+    <table class="table-responsive">
+      <tr>
+        <th>Customer</th>
+        <th>Date</th>
+        <th>Profit</th>
+      </tr>
+      <tr ng-repeat="rent in vm.car.rents">
+        <td ng-bind="rent.user.displayName"></td>
+        <td ng-bind="rent.dateStarted | date:'MM.dd.yyyy'"></td>
+        <td ng-bind="rent.profit | currency:'€':2"></td>
+      </tr>
+    </table>
+  </div>
+
 </section>

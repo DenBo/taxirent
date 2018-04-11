@@ -98,7 +98,7 @@ exports.tariffGroupByID = function (req, res, next, id) {
     });
   }
 
-  TariffGroup.findById(id).exec(function (err, tariffGroup) {
+  TariffGroup.findById(id).populate('tariffs').exec(function (err, tariffGroup) {
     if (err) {
       return next(err);
     } else if (!tariffGroup) {

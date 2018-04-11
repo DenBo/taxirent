@@ -103,15 +103,21 @@ exports.carByID = function (req, res, next, id) {
     });
   }
 
-  Car.findById(id).exec(function (err, car) {
-    if (err) {
-      return next(err);
-    } else if (!car) {
-      return res.status(404).send({
-        message: 'No car with that identifier has been found'
-      });
-    }
-    req.car = car;
-    next();
-  });
+  Car.findById(id).populate({
+    path: 'tariffGroup',
+    populate: {
+      path: 'tariffs',
+      model: 'Tariff'
+    } })
+    .exec(function (err, car) {
+      if (err) {
+        return next(err);
+      } else if (!car) {
+        return res.status(404).send({
+          message: 'No car with that identifier has been found'
+        });
+      }
+      req.car = car;
+      next();
+    });
 };

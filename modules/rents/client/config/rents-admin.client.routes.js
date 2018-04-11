@@ -24,7 +24,7 @@
         }
       })
       .state('admin.rents.create', {
-        url: '/create',
+        url: '/create/:carId',
         templateUrl: '/modules/rents/client/views/admin/form-rent.client.view.html',
         controller: 'RentsAdminController',
         controllerAs: 'vm',
@@ -32,7 +32,8 @@
           roles: ['admin']
         },
         resolve: {
-          rentResolve: newRent
+          rentResolve: newRent,
+          carResolve: getCar
         }
       })
       .state('admin.rents.edit', {
@@ -62,5 +63,13 @@
 
   function newRent(RentsService) {
     return new RentsService();
+  }
+
+  getCar.$inject = ['$stateParams', 'CarsService'];
+
+  function getCar($stateParams, CarsService) {
+    return CarsService.get({
+      carId: $stateParams.carId
+    }).$promise;
   }
 }());
