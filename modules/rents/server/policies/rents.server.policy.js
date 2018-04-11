@@ -20,6 +20,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/rents/:rentId',
       permissions: '*'
+    }, {
+      resources: '/api/rents/bycar',
+      permissions: '*'
     }]
   }, {
     roles: ['user'],
@@ -40,7 +43,7 @@ exports.isAllowed = function (req, res, next) {
   var roles = (req.user) ? req.user.roles : ['guest'];
 
   // If a rent is being processed and the current user created it then allow viewing and cancelling
-  if (req.rent && req.user && req.rent.user && req.rent.user.id === req.user.id) {
+  if (req.rent && req.user && req.rent.customer && req.rent.customer.id === req.user.id) {
     // TODO only allow viewing
     return next();
   }

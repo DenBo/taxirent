@@ -100,6 +100,29 @@ exports.list = function (req, res) {
 };
 
 /**
+ * List of Rents filtered by Car
+ */
+exports.byCar = function (req, res) {
+  var carId = req.body.carId;
+
+  Rent
+    .find({
+      'car': carId
+    })
+    .sort('-dateStarted')
+    .populate('customer', 'displayName')
+    .exec(function (err, rents) {
+      if (err) {
+        return res.status(422).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        res.json(rents);
+      }
+    });
+};
+
+/**
  * Rent middleware
  */
 exports.rentByID = function (req, res, next, id) {

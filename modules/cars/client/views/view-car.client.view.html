@@ -15,8 +15,8 @@
         <th>Date</th>
         <th>Profit</th>
       </tr>
-      <tr ng-repeat="rent in vm.car.rents">
-        <td ng-bind="rent.user.displayName"></td>
+      <tr ng-repeat="rent in vm.rents">
+        <td ng-bind="rent.customer.displayName"></td>
         <td ng-bind="rent.dateStarted | date:'MM.dd.yyyy'"></td>
         <td ng-bind="rent.profit | currency:'€':2"></td>
       </tr>

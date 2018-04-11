@@ -31,7 +31,8 @@ var RentSchema = new Schema({
     required: [true, 'Rent duration must be entered']
   },
   profit: {
-    type: Number
+    type: Number,
+    default: 0
   },
   customer: {
     type: mongoose.Schema.Types.ObjectId,

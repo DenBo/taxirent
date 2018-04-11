@@ -13,6 +13,16 @@
     }, {
       update: {
         method: 'PUT'
+      },
+      getByCarId: {
+        method: 'POST',
+        params: {
+          rentId: 'bycar'
+        },
+        isArray: true,
+        hasBody: true,
+        requestType: 'json',
+        responseType: 'json'
       }
     });
 

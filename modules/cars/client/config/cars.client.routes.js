@@ -26,7 +26,8 @@
         controller: 'CarsController',
         controllerAs: 'vm',
         resolve: {
-          carResolve: getCar
+          carResolve: getCar,
+          rentsResolve: getRents
         },
         data: {
           pageTitle: '{{ carResolve.name }}'
@@ -38,6 +39,14 @@
 
   function getCar($stateParams, CarsService) {
     return CarsService.get({
+      carId: $stateParams.carId
+    }).$promise;
+  }
+
+  getRents.$inject = ['$stateParams', 'RentsService'];
+
+  function getRents($stateParams, RentsService) {
+    return RentsService.getByCarId({}, {
       carId: $stateParams.carId
     }).$promise;
   }
