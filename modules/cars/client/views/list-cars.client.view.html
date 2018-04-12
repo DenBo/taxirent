@@ -15,20 +15,16 @@
           <div class="card-body">
   
             <h5 class="card-title" ng-bind="car.name"></h5>
-  
             <p class="card-text"><img style="width:20px" src="/modules/core/client/img/display/passenger.png" alt="Passengers:"> <span ng-bind="car.maxPassengers"></span></p>
-  
             <p class="card-text"><img style="width:20px" src="/modules/core/client/img/display/speed.png" alt="Speed:"> <span ng-bind="car.maxSpeed"></span> km/h</p>
-  
             <p class="card-text"><img style="width:20px" src="/modules/core/client/img/display/manufactured.png" alt="Manufactured:"> <span ng-bind="car.dateManufactured | date:'MM.dd.yyyy'"></span></p>
-  
             <p class="card-text"><img style="width:20px" src="/modules/core/client/img/display/money.png" alt="Tariff class:"> class <span ng-bind="car.tariffGroup.class"></span></p>
   
           </div>
   
           </div>
           <div class="card-footer">
-            <small class="text-muted">Status: </small><a data-ui-sref="admin.rents.create({ carId: car._id })" class="btn-success"><small>Available</small></a>
+            <small class="text-muted">Status: </small><a data-ui-sref="rents.create({ carId: car._id })" class="btn-success"><small>Available</small></a>
           </div>
   
         </div>

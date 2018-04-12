@@ -31,6 +31,19 @@
         data: {
           pageTitle: '{{ rentResolve.title }}'
         }
+      })
+      .state('rents.create', {
+        url: '/create/:carId',
+        templateUrl: '/modules/rents/client/views/form-rent.client.view.html',
+        controller: 'RentsCreateController',
+        controllerAs: 'vm',
+        data: {
+          roles: ['user']
+        },
+        resolve: {
+          rentResolve: newRent,
+          carResolve: getCar
+        }
       });
   }
 
@@ -39,6 +52,20 @@
   function getRent($stateParams, RentsService) {
     return RentsService.get({
       rentId: $stateParams.rentId
+    }).$promise;
+  }
+
+  newRent.$inject = ['RentsService'];
+
+  function newRent(RentsService) {
+    return new RentsService();
+  }
+
+  getCar.$inject = ['$stateParams', 'CarsService'];
+
+  function getCar($stateParams, CarsService) {
+    return CarsService.get({
+      carId: $stateParams.carId
     }).$promise;
   }
 }());

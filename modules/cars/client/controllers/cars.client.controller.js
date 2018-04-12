@@ -12,7 +12,6 @@
 
     vm.car = car;
     vm.rents = rents;
-    console.log(rents);
     vm.authentication = Authentication;
 
   }

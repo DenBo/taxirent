@@ -33,6 +33,12 @@ exports.invokeRolesPolicies = function () {
       resources: '/api/rents/:rentId',
       permissions: ['get']
     }]
+  }, {
+    roles: ['user', 'guest'],
+    allows: [{
+      resources: '/api/rents/bycar',
+      permissions: ['post']
+    }]
   }]);
 };
 

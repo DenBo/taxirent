@@ -11,7 +11,7 @@
     $stateProvider
       .state('cars', {
         abstract: true,
-        url: '/cars',
+        url: '',
         template: '<ui-view/>'
       })
       .state('cars.list', {

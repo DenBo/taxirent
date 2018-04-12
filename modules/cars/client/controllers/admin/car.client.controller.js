@@ -32,7 +32,6 @@
 
     // Save Car
     function save(isValid) {
-      console.log(vm.tariffGroups);
       if (!isValid) {
         $scope.$broadcast('show-errors-check-validity', 'vm.form.carForm');
         return false;

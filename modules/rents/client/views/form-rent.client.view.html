@@ -1,0 +1,69 @@
+<section>
+  <div class="page-header">
+    <h1>{{vm.rent._id ? 'Edit Rent' : 'Rent '}}<span ng-hide="vm.rent._id" ng-bind="vm.car.name"></span></h1>
+  </div>
+
+  <!-- Button for editing rent if it has an id (is not a new rent) -->
+  <!-- This will not be allowed to users -->
+  <div class="pull-right">
+    <a ng-show="vm.rent._id" class="btn btn-primary" ng-click="vm.remove()">
+      <i class="glyphicon glyphicon-trash"></i>
+    </a>
+  </div>
+
+  <div class="col-md-12">
+    <form name="vm.form.rentForm" class="form-horizontal" ng-submit="vm.save(vm.form.rentForm.$valid)" novalidate>
+      <fieldset>
+        
+        <div class="form-group" show-errors>
+          <label class="control-label" for="duration">Duration</label>
+          <input name="duration" type="time" min="00:01:00" max="23:59:59" ng-model="vm.duration" id="duration" class="form-control" placeholder="HH:mm:s" required autofocus>
+          <div ng-messages="vm.form.rentForm.duration.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Rent duration is required.</p>
+          </div>
+        </div>
+
+        <!-- In case if user does not want to register show personal info fields -->
+        <!-- <div ng-hide="vm.authentication.user">
+
+          <h3>Please register or fill this form</h3>
+
+          <h4>If renting for personal use</h4><br>
+
+          <div class="form-group" show-errors>
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" name="firstName" class="form-control" ng-model="vm.customer.firstName" placeholder="First Name">
+            <div ng-messages="vm.rentForm.firstName.$error" role="alert">
+              <p class="help-block error-text" ng-message="required">First name is required.</p>
+            </div>
+          </div>
+
+          <div class="form-group" show-errors>
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="lastName" class="form-control" ng-model="vm.customer.lastName" placeholder="Last Name">
+            <div ng-messages="vm.rentForm.lastName.$error" role="alert">
+              <p class="help-block error-text" ng-message="required">Last name is required.</p>
+            </div>
+          </div><br>
+
+          <h4>If renting for a company</h4><br>
+
+          <div class="form-group" show-errors>
+            <label for="companyName">Company Name</label>
+            <input type="text" id="companyName" name="companyName" class="form-control" ng-model="vm.customer.companyName" placeholder="Company Name">
+            <div ng-messages="vm.rentForm.lastName.$error" role="alert">
+              <p class="help-block error-text" ng-message="required">Company name is required.</p>
+            </div>
+          </div>
+
+        </div> -->
+
+        <div class="form-group">
+          <button type="submit" class="btn btn-default">{{vm.rent._id ? 'Update' : 'Create'}}</button>
+        </div>
+
+      </fieldset>
+    </form>
+    <h5 ng-if="vm.form.rentForm.duration.$valid">Estimated price of rent: {{vm.getPrice()}} €</h5>
+  </div>
+</section>
