@@ -2,9 +2,11 @@
   <div class="page-header">
     <h1>Cars</h1>
   </div>
-  <div class="card-deck">
+  <div class="row grid">
 
-      <div class="card" ng-repeat="car in vm.cars">
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-4 card grid-item" ng-repeat="car in vm.cars">
+
+        <div class="thumbnail">
 
           <div ui-sref="cars.view({ carId: car._id })">
   
@@ -26,8 +28,7 @@
           <div class="card-footer">
             <small class="text-muted">Status: </small><a data-ui-sref="rents.create({ carId: car._id })" class="btn-success"><small>Available</small></a>
           </div>
-  
         </div>
-
+      </div>
     </div>
 </section>
