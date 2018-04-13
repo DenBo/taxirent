@@ -28,7 +28,7 @@ exports.invokeRolesPolicies = function () {
     roles: ['user'],
     allows: [{
       resources: '/api/rents',
-      permissions: ['get']
+      permissions: ['get', 'post']  // Post for submitting new rent
     }, {
       resources: '/api/rents/:rentId',
       permissions: ['get']
@@ -49,11 +49,11 @@ exports.isAllowed = function (req, res, next) {
   var roles = (req.user) ? req.user.roles : ['guest'];
 
   // If a rent is being processed and the current user created it then allow viewing and cancelling
-  if (req.rent && req.user && req.rent.customer && req.rent.customer.id === req.user.id) {
-    // TODO only allow viewing
-    return next();
-  }
-
+  // if (req.rent && req.user && req.rent.customer && req.rent.customer.id === req.user.id) {
+  //   // TODO only allow viewing
+  //   return next();
+  // }
+  console.log(roles + ' ' + req.route.path + ' ' + req.method);
   // Check for user roles
   acl.areAnyRolesAllowed(roles, req.route.path, req.method.toLowerCase(), function (err, isAllowed) {
     if (err) {

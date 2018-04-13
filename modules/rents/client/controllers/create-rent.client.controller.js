@@ -38,7 +38,7 @@
         .catch(errorCallback);
 
       function successCallback(res) {
-        $state.go('rents.list'); // should we send the User to the list or the updated Rent's view?
+        $state.go('home'); // should we send the User to the list or the updated Rent's view?
         Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Rent saved successfully!' });
       }
 

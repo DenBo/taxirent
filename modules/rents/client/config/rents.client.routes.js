@@ -38,7 +38,7 @@
         controller: 'RentsCreateController',
         controllerAs: 'vm',
         data: {
-          roles: ['user']
+          roles: ['user', 'admin']
         },
         resolve: {
           rentResolve: newRent,

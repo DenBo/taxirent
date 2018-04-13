@@ -5,19 +5,23 @@
  
     <h1 ng-bind="vm.car.name"></h1>
 
-    <h3>Profit:</h3>
+    <h3>Profit: {{ vm.getTotalProfit() | currency:'€':2 }}</h3>
   </div>
  
   <div>
     <table class="table table-responsive table-striped">
       <tr>
         <th>Customer</th>
-        <th>Date</th>
+        <th>Date rented</th>
+        <th>Date released</th>
+        <th>Duration</th>
         <th>Profit</th>
       </tr>
       <tr ng-repeat="rent in vm.rents">
         <td ng-bind="rent.customer.displayName"></td>
-        <td ng-bind="rent.dateStarted | date:'MM.dd.yyyy'"></td>
+        <td ng-bind="rent.dateStarted | date:'MM.dd.yyyy HH:mm'"></td>
+        <td ng-bind="rent.dateEnded | date:'MM.dd.yyyy HH:mm'"></td>
+        <td ng-bind="rent.duration"></td>
         <td ng-bind="rent.profit | currency:'€':2"></td>
       </tr>
     </table>
