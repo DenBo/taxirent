@@ -15,6 +15,9 @@
       <li>
         <img ui-sref="home" alt="TAXI" class="img-responsive" src="/modules/core/client/img/display/profit_invert.png" />
       </li>
+      <li>
+        <span style="margin-left: 10px; line-height: 50px; text-align: center; font-size: 30px; color: rgba(157, 157, 157);">{{ vm.profit }} €</span>
+      </li>
       <li ng-repeat="item in vm.menu.items | orderBy: 'position'" ng-if="item.shouldRender(vm.authentication.user);" ng-switch="item.type" ng-class="{ dropdown: item.type === 'dropdown' }" ui-sref-active="active" class="{{item.class}}" uib-dropdown="item.type === 'dropdown'">
         <a ng-switch-when="dropdown" class="dropdown-toggle" uib-dropdown-toggle role="button">{{::item.title}}&nbsp;<span class="caret"></span></a>
         <ul ng-switch-when="dropdown" class="dropdown-menu">

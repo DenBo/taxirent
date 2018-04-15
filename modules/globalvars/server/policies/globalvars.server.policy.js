@@ -9,50 +9,32 @@ var acl = require('acl');
 acl = new acl(new acl.memoryBackend());
 
 /**
- * Invoke Rents Permissions
+ * Invoke Global vars Permissions
  */
 exports.invokeRolesPolicies = function () {
   acl.allow([{
     roles: ['admin'],
     allows: [{
-      resources: '/api/rents',
+      resources: '/api/globalVars/',
       permissions: '*'
     }, {
-      resources: '/api/rents/:rentId',
+      resources: '/api/globalVars/profit',
       permissions: '*'
-    }, {
-      resources: '/api/rents/bycar',
-      permissions: '*'
-    }]
-  }, {
-    roles: ['user'],
-    allows: [{
-      resources: '/api/rents',
-      permissions: ['get', 'post']  // Post for submitting new rent
-    }, {
-      resources: '/api/rents/:rentId',
-      permissions: ['get']
     }]
   }, {
     roles: ['user', 'guest'],
     allows: [{
-      resources: '/api/rents/bycar',
-      permissions: ['post']
+      resources: '/api/globalVars/profit',
+      permissions: ['get']
     }]
   }]);
 };
 
 /**
- * Check If Rents Policy Allows
+ * Check If Global var Policy Allows
  */
 exports.isAllowed = function (req, res, next) {
   var roles = (req.user) ? req.user.roles : ['guest'];
-
-  // If a rent is being processed and the current user created it then allow viewing and cancelling
-  // if (req.rent && req.user && req.rent.customer && req.rent.customer.id === req.user.id) {
-  //   // TODO only allow viewing
-  //   return next();
-  // }
 
   // Check for user roles
   acl.areAnyRolesAllowed(roles, req.route.path, req.method.toLowerCase(), function (err, isAllowed) {
