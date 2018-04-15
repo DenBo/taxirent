@@ -7,10 +7,17 @@
 
   GlobalVarsService.$inject = ['$resource', '$log'];
 
-  function GlobalVarsService($resource, $log) { 
-    var GlobalVar = $resource('/api/globalVars/profit', {});
+  function GlobalVarsService($resource, $log) {
+    var GlobalVar = {
+      all: $resource('/api/globalVars/', {
+        update: {
+          method: 'PUT'
+        }
+      }),
+      profit: $resource('/api/globalVars/profit')
+    };
 
-    angular.extend(GlobalVar.prototype, {
+    angular.extend(GlobalVar.all.prototype, {
       createOrUpdate: function () {
         var globalVar = this;
         return createOrUpdate(globalVar);

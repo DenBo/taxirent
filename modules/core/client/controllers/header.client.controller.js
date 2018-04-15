@@ -24,7 +24,7 @@
     }
 
     function getProfit() {
-      GlobalVarsService.get().$promise
+      GlobalVarsService.profit.get().$promise
       .then(function (response) {
         vm.profit = response.profit;
       });
