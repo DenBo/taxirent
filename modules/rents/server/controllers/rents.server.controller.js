@@ -6,6 +6,7 @@
 var path = require('path'),
   mongoose = require('mongoose'),
   Rent = mongoose.model('Rent'),
+  activeRentsController = require(path.resolve('./modules/activerents/server/controllers/activerents.server.controller')),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
 /**
@@ -21,7 +22,15 @@ exports.create = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.json(rent);
+      err = activeRentsController.createLocal(rent._id, rent.car, req.user);
+      if (err) {
+        // TODO: delete
+        res.status(422).send({
+          message: err.message
+        });
+      } else {
+        res.json(rent);
+      }
     }
   });
 };

@@ -22,6 +22,11 @@ var ActiveRentSchema = new Schema({
   car: {
     type: mongoose.Schema.Types.ObjectId,
     required: 'Car associated with rent is required'
+  },
+  // for finding out if current user already has rented a car without additional queries
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: 'User associated with rent is required'
   }
 });
 

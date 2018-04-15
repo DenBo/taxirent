@@ -26,6 +26,21 @@ exports.create = function (req, res) {
   });
 };
 
+exports.createLocal = function (rent, car, user) {
+  var activeRent = new ActiveRent();
+  activeRent.car = car;
+  activeRent.rent = rent;
+  activeRent.user = user;
+  console.log(activeRent);
+  activeRent.save(function (err) {
+    if (err) {
+      return { message: errorHandler.getErrorMessage(err) };
+    } else {
+      return;
+    }
+  });
+};
+
 /**
  * Show the current active rent
  */
