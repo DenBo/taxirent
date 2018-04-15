@@ -8,7 +8,7 @@ var activeRentsPolicy = require('../policies/activerents.server.policy'),
 
 module.exports = function (app) {
   // Active rents collection routes
-  app.route('/api/activerents').all(activeRentsPolicy.isAllowed)
+  app.route('/api/activeRents').all(activeRentsPolicy.isAllowed)
     .get(activeRents.list)
     .post(activeRents.create);
 
