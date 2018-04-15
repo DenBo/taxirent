@@ -26,7 +26,14 @@
   
           </div>
           <div class="card-footer">
-            <small class="text-muted">Status: </small><a data-ui-sref="rents.create({ carId: car._id })" class="btn-success"><small>Available</small></a>
+            <small class="text-muted">Status: </small>
+            <a
+              ng-if="car.rented === false"
+              data-ui-sref="rents.create({ carId: car._id })"
+              class="btn-success">
+              <small>Available</small>
+            </a>
+            <small class="btn-danger" ng-if="car.rented === true">Rented</small>
           </div>
         </div>
       </div>
