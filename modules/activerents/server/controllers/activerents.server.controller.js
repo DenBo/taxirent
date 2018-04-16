@@ -6,14 +6,16 @@
 var path = require('path'),
   mongoose = require('mongoose'),
   ActiveRent = mongoose.model('ActiveRent'),
-  errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
+  errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
+  rentsController = require(path.resolve('./modules/rents/server/controllers/rents.server.controller')),
+  globalVarsController = require(path.resolve('./modules/globalvars/server/controllers/globalvars.server.controller')),
+  cron = require('node-cron');
 
 /**
  * Create an active rent
  */
 exports.create = function (req, res) {
-  var activeRent = new ActiveRent(req.body);
-  activeRent.user = req.user;
+  var activeRent = new ActiveRent(req.body.activeRent);
 
   activeRent.save(function (err) {
     if (err) {
@@ -26,12 +28,10 @@ exports.create = function (req, res) {
   });
 };
 
-exports.createLocal = function (rent, car, user) {
+exports.createLocal = function (rent) {
   var activeRent = new ActiveRent();
-  activeRent.car = car;
   activeRent.rent = rent;
-  activeRent.user = user;
-  console.log(activeRent);
+
   activeRent.save(function (err) {
     if (err) {
       return { message: errorHandler.getErrorMessage(err) };
@@ -55,9 +55,7 @@ exports.read = function (req, res) {
  */
 exports.update = function (req, res) {
   var activeRent = req.activeRent;
-
   activeRent.rent = req.body.rent;
-  activeRent.car = req.body.car;
 
   activeRent.save(function (err) {
     if (err) {
@@ -86,6 +84,18 @@ exports.delete = function (req, res) {
     }
   });
 };
+
+function deleteLocal(activeRent) {
+  activeRent.remove(function (err) {
+    if (err) {
+      return {
+        message: errorHandler.getErrorMessage(err)
+      };
+    } else {
+      return;
+    }
+  });
+}
 
 /**
  * List of Active rents
@@ -125,3 +135,52 @@ exports.activeRentByID = function (req, res, next, id) {
     next();
   });
 };
+
+/**
+ * Scheduled tasks: check if rent has finished
+ */
+cron.schedule('*/5 * * * * *', function () {
+  ActiveRent.find().populate({
+    path: 'rent',
+    model: 'Rent',
+    populate: {
+      path: 'car',
+      select: 'tariffGroup',
+      model: 'Car'
+  //   populate: {
+  //     path: 'tariffGroup',
+  //     model: 'TariffGroup',
+  //     populate: {
+  //       path: 'tariffs',
+  //       model: 'Tariff'
+  //     }
+  //   }
+    }
+  })
+  .exec(function (err, activeRentsList) {
+    if (err) {
+      return;
+    }
+    console.log(activeRentsList);
+    // var currentDate = new Date();
+    // for (var i = 0; i < activeRentsList.length; i++) {
+    //   var activeRent = activeRentsList[i];
+    //   var rent = activeRent.rent;
+
+    //   // Calculate date when rent will end from starting date and duration
+    //   var dateEnded = new Date(activeRent.rent.dateStarted);
+    //   dateEnded.setSeconds(dateEnded.getSeconds() + activeRent.rent.duration);
+    //   // If rent has ended set date ended, remove it from active rents and
+    //   // add rent profit to global profit
+    //   if (currentDate >= dateEnded) {
+    //     rent.dateEnded = dateEnded;
+    //     rent.profit = rentsController.getPrice(rent.duration, rent.car.tariffGroup);
+    //     err = rentsController.updateLocal(rent);
+    //     if (err) return;
+    //     err = deleteLocal(activeRent);
+    //     if (err) return;
+    //     err = globalVarsController.addToProfitLocal(rent.profit);
+    //   }
+    // }
+  });
+});

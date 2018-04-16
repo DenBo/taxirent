@@ -127,3 +127,41 @@ exports.getProfit = function (req, res) {
   });
 };
 
+exports.addToProfitLocal = function (amount) {
+  GlobalVar.findOne().exec(function (err, globalVar) {
+    if (err) {
+      return {
+        message: errorHandler.getErrorMessage(err)
+      };
+    } else {
+      if (!globalVar) {
+        globalVar = new GlobalVar();
+        globalVar.save(function (err) {
+          if (err) {
+            return {
+              message: errorHandler.getErrorMessage(err)
+            };
+          }
+        });
+      } else {
+        var sum = globalVar.profit + amount;
+        // if (sum < 0) {
+        //  return {
+        //    message: 'Not enough profit to execute transation'
+        //  };
+        // } else {
+        globalVar.profit = sum;
+        globalVar.save(function (err) {
+          if (err) {
+            return {
+              message: errorHandler.getErrorMessage(err)
+            };
+          } else {
+            return;
+          }
+        });
+        // }
+      }
+    }
+  });
+};
