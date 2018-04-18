@@ -6,8 +6,8 @@
 var path = require('path'),
   mongoose = require('mongoose'),
   Rent = mongoose.model('Rent'),
-  errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
-  activeRentsController = require(path.resolve('./modules/activerents/server/controllers/activerents.server.controller'));
+  ActiveRent = mongoose.model('ActiveRent'),
+  errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
 /**
  * Create a rent
@@ -22,14 +22,17 @@ exports.create = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      err = activeRentsController.createLocal(rent);
-      if (err) {
-        return res.status(422).send({
-          message: err.message
-        });
-      } else {
-        res.json(rent);
-      }
+      var activeRent = new ActiveRent();
+      activeRent.rent = rent;
+      activeRent.save(function (err) {
+        if (err) {
+          return res.status(422).send({
+            message: errorHandler.getErrorMessage(err)
+          });
+        } else {
+          res.json(rent);
+        }
+      });
     }
   });
 };
@@ -70,15 +73,18 @@ exports.update = function (req, res) {
   });
 };
 
-exports.updateLocal = function (rent) {
-  rent.save(function (err) {
-    if (err) {
-      return {
-        message: errorHandler.getErrorMessage(err)
-      };
-    } else {
-      return;
-    }
+/**
+ * Update rent on server
+ */
+exports.update_S = function (rent) {
+  return new Promise((resolve, reject) => {
+    rent.save(function (err) {
+      if (err) {
+        return reject(err);
+      } else {
+        return resolve(rent);
+      }
+    });
   });
 };
 
@@ -168,31 +174,4 @@ exports.rentByID = function (req, res, next, id) {
       req.rent = rent;
       next();
     });
-};
-
-/**
- * Rent price
- */
-
-exports.getPrice = function (dur, tariffGroup) {
-  var price = 0;
-  var prev_tariff_t = 0;
-
-  for (var i = 0; i < tariffGroup.tariffs.length; i++) {
-    var pricePerSec = tariffGroup.tariffs[i].price;
-    // If this is last specified tariff apply its price to all remaining duration
-    if (i === tariffGroup.tariffs.length - 1) {
-      price += dur * pricePerSec;
-      return price;
-    }
-    var tariffDur = tariffGroup.tariffs[i + 1].activeAfter - tariffGroup.tariffs[i].activeAfter;
-    // If duration does not reach next tariff also apply all remaining duration
-    if (dur <= tariffDur) {
-      price += dur * pricePerSec;
-      return price;
-    }
-    price += tariffDur * pricePerSec;
-    dur -= tariffDur;
-  }
-  return price;
 };

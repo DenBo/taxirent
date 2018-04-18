@@ -14,31 +14,36 @@ var path = require('path'),
 exports.create = function (req, res) {
 
   // Check if global vars already exists
-  GlobalVar.findOne().exec(function (err, globalVar) {
-    if (err) {
-      return res.status(422).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
+  let query = GlobalVar.findOne();
+  let result = query.exec();
+
+  result.then(
+    // Success querying global var
+    (globalVar) => {
+      // If it already exists
       if (globalVar) {
         return res.status(409).send({
           message: 'There can only be one document in collection globalvars'
         });
       }
-    }
-  });
-
-  var globalVar = new GlobalVar(req.body);
-
-  globalVar.save(function (err) {
-    if (err) {
+      // If it doesn't exist yet create new
+      globalVar = new GlobalVar(req.body);
+      globalVar.save(function (err) {
+        if (err) {
+          return res.status(422).send({
+            message: errorHandler.getErrorMessage(err)
+          });
+        } else {
+          res.json(globalVar);
+        }
+      });
+    },
+    // Error while querying for global var
+    (err) => {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)
       });
-    } else {
-      res.json(globalVar);
-    }
-  });
+    });
 };
 
 /**
@@ -58,10 +63,13 @@ exports.read = function (req, res) {
             return res.status(422).send({
               message: errorHandler.getErrorMessage(err)
             });
+          } else {
+            res.json(globalVar);
           }
         });
+      } else {
+        res.json(globalVar);
       }
-      res.json(globalVar);
     }
   });
 };
@@ -119,49 +127,53 @@ exports.getProfit = function (req, res) {
             return res.status(422).send({
               message: errorHandler.getErrorMessage(err)
             });
+          } else {
+            res.json(globalVar);
           }
         });
+      } else {
+        res.json(globalVar);
       }
-      res.json(globalVar);
     }
   });
 };
 
-exports.addToProfitLocal = function (amount) {
-  GlobalVar.findOne().exec(function (err, globalVar) {
-    if (err) {
-      return {
-        message: errorHandler.getErrorMessage(err)
-      };
-    } else {
-      if (!globalVar) {
-        globalVar = new GlobalVar();
-        globalVar.save(function (err) {
-          if (err) {
-            return {
-              message: errorHandler.getErrorMessage(err)
-            };
-          }
-        });
-      } else {
-        var sum = globalVar.profit + amount;
-        // if (sum < 0) {
-        //  return {
-        //    message: 'Not enough profit to execute transation'
-        //  };
-        // } else {
-        globalVar.profit = sum;
-        globalVar.save(function (err) {
-          if (err) {
-            return {
-              message: errorHandler.getErrorMessage(err)
-            };
-          } else {
-            return;
-          }
-        });
-        // }
-      }
-    }
+/**
+ * Add amount to profit on server
+ */
+exports.addToProfit_S = function (amount) {
+  return new Promise((resolve, reject) => {
+    let query = GlobalVar.findOne();
+    let result = query.exec();
+
+    result.then(
+      // On success
+      function (globalVar) {
+        if (!globalVar) {
+          globalVar = new GlobalVar();
+        }
+        return add(globalVar, amount);
+      },
+      // On failure
+      function (err) {
+        return reject(err);
+      });
   });
 };
+
+function add(globalVar, amount) {
+  return new Promise((resolve, reject) => {
+    var sum = globalVar.profit + amount;
+    // if (sum < 0) {
+    //  return reject('Profit cannot be negative');
+    // } else {
+    globalVar.profit = sum;
+    globalVar.save(function (err) {
+      if (err) {
+        return reject(err);
+      } else {
+        return resolve(globalVar);
+      }
+    });
+  });
+}

@@ -121,3 +121,18 @@ exports.carByID = function (req, res, next, id) {
       next();
     });
 };
+
+/**
+ * Get car by id on server
+ */
+exports.carByID_S = function (carId) {
+  let query = Car.findById(carId).select('tariffGroup').populate({
+    path: 'tariffGroup',
+    populate: {
+      path: 'tariffs',
+      model: 'Tariff'
+    }
+  });
+
+  return query.exec();
+};
