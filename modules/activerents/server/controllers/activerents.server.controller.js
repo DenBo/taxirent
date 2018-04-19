@@ -92,7 +92,13 @@ function delete_S(activeRent) {
  * List of Active rents
  */
 exports.list = function (req, res) {
-  ActiveRent.find().exec(function (err, activeRents) {
+  ActiveRent
+  .find()
+  .populate({
+    path: 'rent',
+    select: 'car'
+  })
+  .exec(function (err, activeRents) {
     if (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)

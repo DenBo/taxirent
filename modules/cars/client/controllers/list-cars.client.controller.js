@@ -25,7 +25,7 @@
         angular.forEach(vm.cars, function (car) {
           car.rented = false;
           angular.forEach(activeRents, function (activeRent) {
-            if (car._id === activeRent.car) {
+            if (car._id === activeRent.rent.car) {
               car.rented = true;
             }
           });
