@@ -15,7 +15,8 @@ var mongoose = require('mongoose'),
 var ActiveRentSchema = new Schema({
   rent: {
     type: mongoose.Schema.Types.ObjectId,
-    required: 'Active rent has no purpose without rent'
+    required: 'Active rent has no purpose without rent',
+    ref: 'Rent'
   }
 });
 

@@ -15,22 +15,43 @@ var path = require('path'),
 exports.create = function (req, res) {
   var rent = new Rent(req.body);
   rent.customer = req.user;
-
-  rent.save(function (err) {
+  ActiveRent.find().populate({ path: 'rent', select: ['car', 'customer'] }).exec(function (err, activeRentsList) {
     if (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      var activeRent = new ActiveRent();
-      activeRent.rent = rent;
-      activeRent.save(function (err) {
+      // Check if car is already rented first
+      for (let i = 0; i < activeRentsList.length; i++) {
+        if (activeRentsList[i].rent.car.equals(rent.car)) {
+          return res.status(422).send({
+            message: 'Car cannot be rented again until previous rent has completed'
+          });
+        }
+        console.log(activeRentsList[i].rent.customer + ' ' + rent.customer._id);
+        if (activeRentsList[i].rent.customer.equals(rent.customer._id)) {
+          return res.status(422).send({
+            message: 'Only one car can be rented per customer at a time'
+          });
+        }
+      }
+      rent.save(function (err) {
         if (err) {
           return res.status(422).send({
             message: errorHandler.getErrorMessage(err)
           });
         } else {
-          res.json(rent);
+          var activeRent = new ActiveRent();
+          activeRent.rent = rent;
+          activeRent.save(function (err) {
+            if (err) {
+              return res.status(422).send({
+                message: errorHandler.getErrorMessage(err)
+              });
+            } else {
+              res.json(rent);
+            }
+          });
         }
       });
     }
