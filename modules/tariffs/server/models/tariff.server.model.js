@@ -28,14 +28,4 @@ var TariffSchema = new Schema({
   }
 });
 
-// Getter
-TariffSchema.path('price').get(function (num) {
-  return (num / 100);
-});
-
-// Setter
-TariffSchema.path('price').set(function (num) {
-  return num * 100;
-});
-
 mongoose.model('Tariff', TariffSchema);

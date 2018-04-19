@@ -86,7 +86,7 @@ function delete_S(activeRent) {
       }
     });
   });
-};
+}
 
 /**
  * List of Active rents
@@ -210,17 +210,17 @@ function processRent(car, rent, activeRent) {
  * Rent price
  */
 function getPrice(dur, tariffGroup) {
-  var price = 0;
-  var prev_tariff_t = 0;
-
-  for (var i = 0; i < tariffGroup.tariffs.length; i++) {
-    var pricePerSec = tariffGroup.tariffs[i].price;
+  // Only works if tariffs are sorted by time active
+  tariffGroup.tariffs.sort(compareTariffsByTimeActive);
+  let price = 0;
+  for (let i = 0; i < tariffGroup.tariffs.length; i++) {
+    let pricePerSec = tariffGroup.tariffs[i].price;
     // If this is last specified tariff apply its price to all remaining duration
     if (i === tariffGroup.tariffs.length - 1) {
       price += dur * pricePerSec;
       return price;
     }
-    var tariffDur = tariffGroup.tariffs[i + 1].activeAfter - tariffGroup.tariffs[i].activeAfter;
+    let tariffDur = tariffGroup.tariffs[i + 1].activeAfter - tariffGroup.tariffs[i].activeAfter;
     // If duration does not reach next tariff also apply all remaining duration
     if (dur <= tariffDur) {
       price += dur * pricePerSec;
@@ -237,4 +237,15 @@ function getPrice(dur, tariffGroup) {
  */
 function toConsole(data) {
   console.log(data);
+}
+
+/**
+ * Tariff sort comparator
+ */
+function compareTariffsByTimeActive(a, b) {
+  if (a.activeAfter < b.activeAfter)
+    return -1;
+  if (a.activeAfter > b.activeAfter)
+    return 1;
+  return 0;
 }

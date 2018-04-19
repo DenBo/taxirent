@@ -22,7 +22,6 @@
       .then(function (values) {
         vm.cars = values[0];
         var activeRents = values[1];
-        console.log(values[0]);
         angular.forEach(vm.cars, function (car) {
           car.rented = false;
           angular.forEach(activeRents, function (activeRent) {

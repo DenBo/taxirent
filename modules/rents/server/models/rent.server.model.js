@@ -41,14 +41,4 @@ var RentSchema = new Schema({
   }
 });
 
-// Getter
-RentSchema.path('profit').get(function (num) {
-  return (num / 100).toFixed(2);
-});
-
-// Setter
-RentSchema.path('profit').set(function (num) {
-  return num * 100;
-});
-
 mongoose.model('Rent', RentSchema);

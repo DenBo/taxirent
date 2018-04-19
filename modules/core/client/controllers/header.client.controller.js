@@ -26,7 +26,7 @@
     function getProfit() {
       GlobalVarsService.profit.get().$promise
       .then(function (response) {
-        vm.profit = response.profit;
+        vm.profit = (response.profit / 100).toFixed(2);
       });
       return '';
     }

@@ -17,6 +17,7 @@
     Object.assign({}, ...arr.map(item => ({ [item[keyField]]: item })));
 
     vm.tariffsById = {};
+    vm.convertPrice = convertPrice;
     vm.tariffGroups = TariffGroupsService.query(function () {
 
       // Create a set of id's of tariffs that need to be retrieved from db
@@ -33,5 +34,9 @@
         vm.tariffsById = arrayToObject(angular.fromJson(vm.tariffs), '_id');
       });
     });
+  }
+
+  function convertPrice(priceCents) {
+    return (priceCents / 100).toFixed(2);
   }
 }());

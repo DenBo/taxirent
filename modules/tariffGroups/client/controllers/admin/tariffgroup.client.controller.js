@@ -16,6 +16,7 @@
     vm.form = {};
     vm.remove = remove;
     vm.save = save;
+    vm.convertPrice = convertPrice;
 
     // Remove existing Tariff Group
     function remove() {
@@ -48,5 +49,9 @@
         Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Tariff class save error!' });
       }
     }
+  }
+
+  function convertPrice(priceCents) {
+    return (priceCents / 100).toFixed(2);
   }
 }());

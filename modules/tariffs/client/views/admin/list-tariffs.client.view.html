@@ -14,7 +14,7 @@
         <span data-ng-bind="tariff.activeAfter"></span>
          s 
         <img alt="Price" src="/modules/core/client/img/display/money.png" />
-        <span data-ng-bind="tariff.price"></span> €/s
+        {{vm.convertPrice(tariff.price)}} €/s
       </p>
     </a>
   </div>

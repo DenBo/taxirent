@@ -11,5 +11,10 @@
     var vm = this;
 
     vm.tariffs = TariffsService.query();
+    vm.convertPrice = convertPrice;
+  }
+
+  function convertPrice(priceCents) {
+    return (priceCents / 100).toFixed(2);
   }
 }());

@@ -20,7 +20,7 @@
         <div class="form-group" show-errors>
           <label class="control-label" for="tariffs">Tariffs</label>
           <select name="tariffs" multiple="true" size="5" ng-model="vm.tariffGroup.tariffs" id="tariffs" class="form-control" placeholder="Tariffs" required>
-            <option ng-repeat="tariff in vm.tariffs track by $index" value="{{tariff.id}}">Price: <span>{{tariff.price}}</span> €/s Activates at: <span>{{tariff.activeAfter}}</span>s</option> 
+            <option ng-repeat="tariff in vm.tariffs track by $index" value="{{tariff.id}}">Price: {{vm.convertPrice(tariff.price)}} €/s Activates at: <span>{{tariff.activeAfter}}</span>s</option> 
           </select>
           <div ng-messages="vm.form.tariffGroupForm.tariffs.$error" role="alert">
             <p class="help-block error-text" ng-message="required">Tariff is required.</p>

@@ -12,7 +12,7 @@
 
     vm.rent = rent;
     vm.car = car;
-    vm.car.tariffGroup.tariffs.sort(compareTariffs);
+    vm.car.tariffGroup.tariffs.sort(compareTariffsByTimeActive);
     vm.duration = vm.duration ? parseDate(vm.rent.duration) : vm.duration;
     vm.authentication = Authentication;
     vm.form = {};
@@ -69,18 +69,18 @@
     }
 
     function getPrice() {
-      var price = 0;
-      var prev_tariff_t = 0;
-      var dur = getDuration(vm.duration);
+      // Only works if tariffs are sorted by time active
+      let price = 0;
+      let dur = getDuration(vm.duration);
 
-      for (var i = 0; i < vm.car.tariffGroup.tariffs.length; i++) {
-        var pricePerSec = vm.car.tariffGroup.tariffs[i].price;
+      for (let i = 0; i < vm.car.tariffGroup.tariffs.length; i++) {
+        let pricePerSec = vm.car.tariffGroup.tariffs[i].price / 100;
         // If this is last specified tariff apply its price to all remaining duration
         if (i === vm.car.tariffGroup.tariffs.length - 1) {
           price += dur * pricePerSec;
           return price;
         }
-        var tariffDur = vm.car.tariffGroup.tariffs[i + 1].activeAfter - vm.car.tariffGroup.tariffs[i].activeAfter;
+        let tariffDur = vm.car.tariffGroup.tariffs[i + 1].activeAfter - vm.car.tariffGroup.tariffs[i].activeAfter;
         // If duration does not reach next tariff also apply all remaining duration
         if (dur <= tariffDur) {
           price += dur * pricePerSec;
@@ -92,7 +92,7 @@
       return price;
     }
 
-    function compareTariffs(a, b) {
+    function compareTariffsByTimeActive(a, b) {
       if (a.activeAfter < b.activeAfter)
         return -1;
       if (a.activeAfter > b.activeAfter)

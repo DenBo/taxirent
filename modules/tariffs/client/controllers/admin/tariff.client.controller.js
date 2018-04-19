@@ -11,10 +11,12 @@
     var vm = this;
 
     vm.tariff = tariff;
+    vm.price = tariff.price / 100; // Because tariff stores price in cents
     vm.authentication = Authentication;
     vm.form = {};
     vm.remove = remove;
     vm.save = save;
+    vm.convertPrice = convertPrice;
 
     // Remove existing Tariff
     function remove() {
@@ -33,6 +35,8 @@
         return false;
       }
 
+      vm.tariff.price = vm.price * 100;
+
       // Create a new tariff, or update the current instance
       vm.tariff.createOrUpdate()
         .then(successCallback)
@@ -47,5 +51,9 @@
         Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Tariff save error!' });
       }
     }
+  }
+
+  function convertPrice(priceCents) {
+    return (priceCents / 100).toFixed(2);
   }
 }());

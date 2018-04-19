@@ -163,7 +163,7 @@ exports.addToProfit_S = function (amount) {
 
 function add(globalVar, amount) {
   return new Promise((resolve, reject) => {
-    var sum = globalVar.profit + amount;
+    let sum = globalVar.profit + amount;
     // if (sum < 0) {
     //  return reject('Profit cannot be negative');
     // } else {
