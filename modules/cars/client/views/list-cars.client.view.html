@@ -26,14 +26,16 @@
   
           </div>
           <div class="card-footer">
-            <small class="text-muted">Status: </small>
+            <small ng-if="car.rented === 'false' || car.rented === 'true'" class="text-muted">Status: </small>
+            <small ng-if="car.rented === 'byLogged'" class="text-muted">Rented </small>
             <a
-              ng-if="car.rented === false"
+              ng-if="car.rented === 'false'"
               data-ui-sref="rents.create({ carId: car._id })"
               class="btn-success">
               <small>Available</small>
             </a>
-            <small class="btn-danger" ng-if="car.rented === true">Rented</small>
+            <small class="btn-danger" ng-if="car.rented === 'true'">Rented</small>
+            <small class="btn-warning" ng-if="car.rented === 'byLogged'">Cancel?</small>
           </div>
         </div>
       </div>

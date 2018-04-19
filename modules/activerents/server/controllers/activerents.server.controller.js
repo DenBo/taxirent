@@ -96,7 +96,12 @@ exports.list = function (req, res) {
   .find()
   .populate({
     path: 'rent',
-    select: 'car'
+    select: ['car', 'customer'],
+    populate: {
+      model: 'User',
+      path: 'customer',
+      select: 'username'
+    }
   })
   .exec(function (err, activeRents) {
     if (err) {
