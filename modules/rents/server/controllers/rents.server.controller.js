@@ -196,3 +196,20 @@ exports.rentByID = function (req, res, next, id) {
       next();
     });
 };
+
+exports.rentByID_S = function (id) {
+  let query = Rent
+    .findById(id)
+    .populate({
+      path: 'car',
+      select: 'tariffGroup',
+      model: 'Car',
+      populate: {
+        model: 'TariffGroup',
+        path: 'tariffGroup',
+        select: 'tariffs'
+      }
+    });
+
+  return query.exec();
+};

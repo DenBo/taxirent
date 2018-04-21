@@ -5,12 +5,13 @@
     .module('cars')
     .controller('CarsListController', CarsListController);
 
-  CarsListController.$inject = ['$scope', 'CarsService', 'ActiveRentsService', 'Authentication'];
+  CarsListController.$inject = ['$scope', '$state', '$window', 'CarsService', 'ActiveRentsService', 'Authentication', 'Notification'];
 
-  function CarsListController($scope, CarsService, ActiveRentsService, Authentication) {
+  function CarsListController($scope, $state, $window, CarsService, ActiveRentsService, Authentication, Notification) {
     var vm = this;
 
     vm.cars = {};
+    vm.cancelRent = cancelRent;
 
     display();
 
@@ -30,6 +31,7 @@
               car.rented = 'true';
               if (activeRent.rent.customer.username === Authentication.user.username) {
                 car.rented = 'byLogged';
+                car.activeRent = activeRent;  // For cancelling
               }
             }
           });
@@ -40,6 +42,24 @@
 
     function convertDate(date) {
       return new Date(date);
+    }
+
+  /**
+   * Cancel existing rent
+   */
+    function cancelRent(car) {
+      if (!car.activeRent) {
+        Notification.error({ message: '<i class="glyphicon glyphicon-ok"></i> An error has occured!' });
+        return;
+      }
+      let activeRent = car.activeRent;
+      console.log(activeRent);
+      if ($window.confirm('Are you sure you want to cancel?')) {
+        ActiveRentsService.cancel({}, activeRent, function () {
+          $state.go('home');
+          Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Rent cancelled successfully!' });
+        });
+      }
     }
   }
 }());

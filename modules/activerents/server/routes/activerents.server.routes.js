@@ -16,7 +16,8 @@ module.exports = function (app) {
   app.route('/api/activeRents/:activeRentId').all(activeRentsPolicy.isAllowed)
     .get(activeRents.read)
     .put(activeRents.update)
-    .delete(activeRents.delete);
+    .delete(activeRents.delete)
+    .post(activeRents.cancel);
 
   // Finish by binding the active rent middleware
   app.param('activeRentId', activeRents.activeRentByID);

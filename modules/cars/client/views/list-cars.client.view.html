@@ -31,11 +31,12 @@
             <a
               ng-if="car.rented === 'false'"
               data-ui-sref="rents.create({ carId: car._id })"
-              class="btn-success">
+              class="btn-success"
+            >
               <small>Available</small>
             </a>
             <small class="btn-danger" ng-if="car.rented === 'true'">Rented</small>
-            <small class="btn-warning" ng-if="car.rented === 'byLogged'">Cancel?</small>
+            <small ng-click="vm.cancelRent(car)" ng-if="car.rented === 'byLogged'" class="btn-warning">Cancel?</small>
           </div>
         </div>
       </div>

@@ -8,9 +8,16 @@
   ActiveRentsService.$inject = ['$resource', '$log'];
 
   function ActiveRentsService($resource, $log) {
-    var ActiveRent = $resource('/api/activeRents/', {
+    var ActiveRent = $resource('/api/activeRents/:activeRentId', {
+      activeRentId: '@_id'
+    }, {
       update: {
         method: 'PUT'
+      },
+      cancel: {
+        method: 'POST',
+        isArray: false,
+        hasBody: true
       }
     });
 

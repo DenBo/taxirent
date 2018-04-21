@@ -29,7 +29,7 @@
       }
 
       // Convert array to map for easier access, make tarif id map key and tarif object map value
-      // TODO: only get required tariffs, not all of them to minimize database usage
+      // Only get required tariffs, not all of them to minimize database usage
       vm.tariffs = TariffsService.subset({}, Array.from(tariffIdsToRetrieve), function () {
         vm.tariffsById = arrayToObject(angular.fromJson(vm.tariffs), '_id');
       });

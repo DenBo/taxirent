@@ -74,6 +74,49 @@ exports.delete = function (req, res) {
 };
 
 /**
+ * Cancel a rent
+ */
+exports.cancel = function (req, res) {
+  var activeRent = req.body;
+  rentsCtrl.rentByID_S(activeRent.rent._id)
+  .then(
+    function (rent) {
+      console.log(rent);
+      if (!rent) {
+        return res.status(422).send({
+          message: 'No rent was found associated with provided data'
+        });
+      }
+      console.log(rent.customer);
+      console.log(req.user);
+      if (rent.customer !== req.user) {
+        return res.status(403).send({
+          message: 'Not allowed to cancel other users rent'
+        });
+      }
+      activeRent.rent = rent;
+      rent.dateEnded = new Date();
+      rent.profit = 500;  // TODO: read from db (global vars)
+      finishRent(activeRent).then(
+        function () {
+          res.json();
+        },
+        function (err) {
+          return res.status(422).send({
+            message: errorHandler.getErrorMessage(err)
+          });
+        }
+      );
+    },
+    function (err) {
+      return res.status(422).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    }
+  );
+};
+
+/**
  * Delete an active rent on server
  */
 function delete_S(activeRent) {
@@ -142,22 +185,12 @@ exports.activeRentByID = function (req, res, next, id) {
  * List of Active rents on server
  */
 function getActiveRents() {
-  return new Promise((resolve, reject) => {
-    let query = ActiveRent.find().populate({
-      path: 'rent',
-      model: 'Rent'
-    });
-
-    let result = query.exec();
-
-    result.then(
-      function (data) {
-        return resolve(data);
-      },
-      function (err) {
-        return reject(err);
-      });
+  let query = ActiveRent.find().populate({
+    path: 'rent',
+    model: 'Rent'
   });
+
+  return query.exec();
 }
 
 /**
@@ -167,58 +200,84 @@ cron.schedule('*/5 * * * * *', function () {
   getActiveRents().then(checkActiveRents, toConsole);
 });
 
+/**
+ * Check if any rent has finished
+ */
 function checkActiveRents(activeRentsList) {
   let currentDate = new Date();
   for (let i = 0; i < activeRentsList.length; i++) {
     let activeRent = activeRentsList[i];
     let rent = activeRent.rent;
-    let carId = rent.car;
-
-    // Calculate date when rent will end from starting date and duration
-    let dateEnded = new Date(rent.dateStarted);
-    dateEnded.setSeconds(dateEnded.getSeconds() + rent.duration);
+    let dateEnded = getDateEnded(rent);
     // If rent has ended set date ended, remove it from active rents and
     // add rent profit to global profit
     if (currentDate >= dateEnded) {
       rent.dateEnded = dateEnded;
-      // Get car
-      carsCtrl.carByID_S(carId)
-      // Process rent
-      .then(
-        function (car) {
-          if (!car) {
-            return;
-          }
-          processRent(car, rent, activeRent);
-        },
-        toConsole
-      );
+      finishRent(activeRent);
     }
   }
 }
 
-function processRent(car, rent, activeRent) {
-  rent.profit = getPrice(rent.duration, car.tariffGroup);
-  // Update rent with profit and date ended
-  rentsCtrl.update_S(rent)
-  .then(
-    function (rent) {
-      // Delete rent from list of active rents
-      delete_S(activeRent)
-      .then(
-        function () {
-          // Add profit from deleted active rent to total profit
-          globalVarsCtrl.addToProfit_S(rent.profit).catch(toConsole);
-        },
-        toConsole
-      );
-    },
-    toConsole
-  );
+function getDateEnded(rent) {
+  // Calculate date when rent will end from starting date and duration
+  let dateEnded = new Date(rent.dateStarted);
+  dateEnded.setSeconds(dateEnded.getSeconds() + rent.duration);
+  return dateEnded;
 }
 
 /**
- * Rent price
+ * Finish a rent
+ */
+function finishRent(activeRent) {
+  return new Promise((resolve, reject) => {
+    let rent = activeRent.rent;
+    // Get car
+    carsCtrl.carByID_S(rent.car).then(
+      // Process rent
+      function (car) {
+        if (!car) {
+          return reject('Rent contains invalid car id');
+        }
+        if (!rent.profit) {
+          rent.profit = 0;
+        }
+        rent.profit += getPrice(rent.duration, car.tariffGroup);
+        // Update rent with profit and date ended
+        rentsCtrl.update_S(rent).then(
+          function (rent) {
+            // Delete rent from list of active rents
+            delete_S(activeRent).then(
+              function () {
+                // Add profit from deleted active rent to total profit
+                globalVarsCtrl.addToProfit_S(rent.profit)
+                .then(
+                  function () {
+                    return resolve();
+                  },
+                  function (err) {
+                    return reject(err);
+                  }
+                );
+              },
+              function (err) {
+                return reject(err);
+              }
+            );
+          },
+          function (err) {
+            return reject(err);
+          }
+        );
+      },
+      function (err) {
+        return reject(err);
+      }
+    );
+  });
+}
+
+/**
+ * Get rent price
  */
 function getPrice(dur, tariffGroup) {
   // Only works if tariffs are sorted by time active
@@ -251,7 +310,7 @@ function toConsole(data) {
 }
 
 /**
- * Tariff sort comparator
+ * Tariff sort by activeAfter comparator
  */
 function compareTariffsByTimeActive(a, b) {
   if (a.activeAfter < b.activeAfter)
