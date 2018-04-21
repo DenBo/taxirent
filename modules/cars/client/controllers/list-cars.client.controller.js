@@ -5,15 +5,17 @@
     .module('cars')
     .controller('CarsListController', CarsListController);
 
-  CarsListController.$inject = ['$scope', '$state', '$window', 'CarsService', 'ActiveRentsService', 'Authentication', 'Notification'];
+  CarsListController.$inject = ['$scope', '$state', '$window', '$interval', 'CarsService', 'ActiveRentsService', 'Authentication', 'Notification'];
 
-  function CarsListController($scope, $state, $window, CarsService, ActiveRentsService, Authentication, Notification) {
+  function CarsListController($scope, $state, $window, $interval, CarsService, ActiveRentsService, Authentication, Notification) {
     var vm = this;
 
     vm.cars = {};
     vm.cancelRent = cancelRent;
 
     display();
+
+    $interval(display, 2000); // Refresh data from db on regular interval
 
     function display() {
       return Promise.all([
@@ -55,12 +57,13 @@
       let activeRentId = car.activeRent._id;
       if ($window.confirm('Are you sure you want to cancel?')) {
         ActiveRentsService.cancel({ activeRentId }, {}, function () {
+          // All of the following methods are irrelevant with automatic refresh every 2 seconds
           // $timeout(function () {
             // anything you want can go here and will safely be run on the next digest.
             // any code in here will automatically have an apply run afterwards
           // });
-          $state.reload(); // or refresh parts that changed
-          // $state.go('home'); does not refresh because we are already in this state
+          // $state.reload(); // Too noticeable
+          // $state.go('home'); Does not refresh because we are already in this state
           Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Rent cancelled successfully!' });
         });
       }

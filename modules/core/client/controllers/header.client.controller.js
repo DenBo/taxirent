@@ -5,9 +5,9 @@
     .module('core')
     .controller('HeaderController', HeaderController);
 
-  HeaderController.$inject = ['$scope', '$state', 'Authentication', 'GlobalVarsService', 'menuService'];
+  HeaderController.$inject = ['$scope', '$state', '$interval', 'Authentication', 'GlobalVarsService', 'menuService'];
 
-  function HeaderController($scope, $state, Authentication, GlobalVarsService, menuService) {
+  function HeaderController($scope, $state, $interval, Authentication, GlobalVarsService, menuService) {
     var vm = this;
 
     vm.accountMenu = menuService.getMenu('account').items[0];
@@ -17,6 +17,8 @@
     vm.profit = getProfit();
 
     $scope.$on('$stateChangeSuccess', stateChangeSuccess);
+
+    $interval(getProfit, 2000); // Refresh data from db on regular interval
 
     function stateChangeSuccess() {
       // Collapsing the menu after navigation
