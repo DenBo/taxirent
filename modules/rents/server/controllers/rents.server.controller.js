@@ -28,7 +28,6 @@ exports.create = function (req, res) {
             message: 'Car cannot be rented again until previous rent has completed'
           });
         }
-        console.log(activeRentsList[i].rent.customer + ' ' + rent.customer._id);
         if (activeRentsList[i].rent.customer.equals(rent.customer._id)) {
           return res.status(422).send({
             message: 'Only one car can be rented per customer at a time'

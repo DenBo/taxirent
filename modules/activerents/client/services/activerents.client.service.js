@@ -17,7 +17,7 @@
       cancel: {
         method: 'POST',
         isArray: false,
-        hasBody: true
+        hasBody: false
       }
     });
 

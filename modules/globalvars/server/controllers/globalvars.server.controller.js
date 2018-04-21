@@ -145,14 +145,20 @@ exports.addToProfit_S = function (amount) {
   return new Promise((resolve, reject) => {
     let query = GlobalVar.findOne();
     let result = query.exec();
-
     result.then(
       // On success
       function (globalVar) {
         if (!globalVar) {
           globalVar = new GlobalVar();
         }
-        return add(globalVar, amount);
+        add(globalVar, amount).then(
+          function () {
+            return resolve();
+          },
+          function (err) {
+            return reject(err);
+          }
+        );
       },
       // On failure
       function (err) {

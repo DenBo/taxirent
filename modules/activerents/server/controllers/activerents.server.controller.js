@@ -77,26 +77,27 @@ exports.delete = function (req, res) {
  * Cancel a rent
  */
 exports.cancel = function (req, res) {
-  var activeRent = req.body;
-  rentsCtrl.rentByID_S(activeRent.rent._id)
+  var activeRent = req.activeRent;
+  rentsCtrl.rentByID_S(activeRent.rent)
   .then(
     function (rent) {
-      console.log(rent);
       if (!rent) {
         return res.status(422).send({
           message: 'No rent was found associated with provided data'
         });
       }
-      console.log(rent.customer);
-      console.log(req.user);
-      if (rent.customer !== req.user) {
+      if (!rent.customer.equals(req.user._id)) {
         return res.status(403).send({
           message: 'Not allowed to cancel other users rent'
         });
       }
-      activeRent.rent = rent;
+      // Charge time before cancelling
+      let currentDate = new Date();
+      rent.duration = Math.ceil((currentDate.getTime() - rent.dateStarted.getTime()) / 1000);
       rent.dateEnded = new Date();
-      rent.profit = 500;  // TODO: read from db (global vars)
+      rent.profit = 50000;  // TODO: read from db (global vars)
+
+      activeRent.rent = rent;
       finishRent(activeRent).then(
         function () {
           res.json();
@@ -115,21 +116,6 @@ exports.cancel = function (req, res) {
     }
   );
 };
-
-/**
- * Delete an active rent on server
- */
-function delete_S(activeRent) {
-  return new Promise((resolve, reject) => {
-    activeRent.remove(function (err) {
-      if (err) {
-        return reject(err);
-      } else {
-        return resolve();
-      }
-    });
-  });
-}
 
 /**
  * List of Active rents
@@ -167,7 +153,6 @@ exports.activeRentByID = function (req, res, next, id) {
       message: 'Active rent is invalid'
     });
   }
-
   ActiveRent.findById(id).exec(function (err, activeRent) {
     if (err) {
       return next(err);
@@ -238,15 +223,16 @@ function finishRent(activeRent) {
         if (!car) {
           return reject('Rent contains invalid car id');
         }
-        if (!rent.profit) {
-          rent.profit = 0;
-        }
+        // Mongoose sets this by default to 0
+        // if (!rent.profit) {
+        //   rent.profit = 0;
+        // }
         rent.profit += getPrice(rent.duration, car.tariffGroup);
         // Update rent with profit and date ended
         rentsCtrl.update_S(rent).then(
           function (rent) {
             // Delete rent from list of active rents
-            delete_S(activeRent).then(
+            activeRent.remove().then(
               function () {
                 // Add profit from deleted active rent to total profit
                 globalVarsCtrl.addToProfit_S(rent.profit)

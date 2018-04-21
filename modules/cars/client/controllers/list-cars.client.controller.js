@@ -52,11 +52,15 @@
         Notification.error({ message: '<i class="glyphicon glyphicon-ok"></i> An error has occured!' });
         return;
       }
-      let activeRent = car.activeRent;
-      console.log(activeRent);
+      let activeRentId = car.activeRent._id;
       if ($window.confirm('Are you sure you want to cancel?')) {
-        ActiveRentsService.cancel({}, activeRent, function () {
-          $state.go('home');
+        ActiveRentsService.cancel({ activeRentId }, {}, function () {
+          // $timeout(function () {
+            // anything you want can go here and will safely be run on the next digest.
+            // any code in here will automatically have an apply run afterwards
+          // });
+          $state.reload(); // or refresh parts that changed
+          // $state.go('home'); does not refresh because we are already in this state
           Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Rent cancelled successfully!' });
         });
       }
