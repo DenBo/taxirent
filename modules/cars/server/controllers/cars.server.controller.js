@@ -8,12 +8,67 @@ var path = require('path'),
   Car = mongoose.model('Car'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
+let carNames = [
+  'Opel Astra',
+  'Opel Meriva',
+  'Opel Insignia',
+  'Opel Corsa',
+  'Opel Kadett',
+  'BMW X5',
+  'BMW M3',
+  'BMW X1',
+  'Citroen C5',
+  'Citroen C4',
+  'Citroen Xsara',
+  'Citroen Xsara Picasso',
+  'Citroen Cactus',
+  'Renault Clio',
+  'Renault Megane',
+  'Renault Megane Scenic',
+  'Renault VelSatis',
+  'Dacia Logan',
+  'Porsche Panamera',
+  'Porsche Cayenne',
+  'Hyundai Getz',
+  'Kia Sportage',
+  'Nissan Micra',
+  'Fiat Punto',
+  'Fiat Doblo',
+  'Audi A3',
+  'Audi A5',
+  'Audi A6',
+  'Peugeot 306',
+  'Peugeot 206',
+  'Ford Focus',
+  'Ford C-Max',
+  'Ford S-Max',
+  'Mercedes A Class'
+];
+
+let carImages = [
+  'blue.png',
+  'green.png',
+  'grey.png',
+  'pink.png',
+  'red.png',
+  'yellow.png'
+];
+
 /**
  * Create a car
  */
 exports.create = function (req, res) {
 
   var car = new Car(req.body);
+
+  if (req.body.random && req.body.random === true) {
+    car.name = carNames[Math.floor(Math.random() * carNames.length)];
+    car.image = carImages[Math.floor(Math.random() * carImages.length)];
+    car.dateManufactured = randomDate(new Date(2000, 0, 1), new Date());
+    car.maxPassengers = Math.floor((Math.random() * 6) + 4);
+    car.maxSpeed = Math.floor((Math.random() * 280) + 140);
+    car.tariffGroup = '5ac4e29aaa293c1af8dc94de';
+  }
 
   car.save(function (err) {
     if (err) {
@@ -25,6 +80,10 @@ exports.create = function (req, res) {
     }
   });
 };
+
+function randomDate(start, end) {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
 
 /**
  * Show the current car
