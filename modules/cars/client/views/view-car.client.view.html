@@ -1,7 +1,7 @@
 <section>
   <div class="page-header">
     <img class="img-thumbnail user-profile-picture" ng-if="vm.car.image == ''" src="/modules/cars/client/img/car/stock.png">
-    <img class="img-thumbnail user-profile-picture" ng-if="vm.car.image != ''" ng-src="/modules/cars/client/img/car/uploads/{{car.image}}">
+    <img class="img-thumbnail user-profile-picture" ng-if="vm.car.image != ''" ng-src="/modules/cars/client/img/car/uploads/{{vm.car.image}}">
  
     <h1 ng-bind="vm.car.name"></h1>
 

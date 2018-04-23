@@ -26,17 +26,20 @@
   
           </div>
           <div class="card-footer">
-            <small ng-if="car.rented === 'false' || car.rented === 'true'" class="text-muted">Status: </small>
-            <small ng-if="car.rented === 'byLogged'" class="text-muted">Rented </small>
-            <a
-              ng-if="car.rented === 'false'"
-              data-ui-sref="rents.create({ carId: car._id })"
-              class="btn-success"
-            >
-              <small>Available</small>
-            </a>
-            <small class="btn-danger" ng-if="car.rented === 'true'">Rented</small>
-            <small ng-click="vm.cancelRent(car)" ng-if="car.rented === 'byLogged'" class="btn-warning">Cancel?</small>
+            <small ng-if="car.rented === 'false' || car.rented === 'true' || car.status === 'retired'" class="text-muted">Status: </small>
+            <span ng-if="car.status !== 'retired'">
+              <small ng-if="car.rented === 'byLogged'" class="text-muted">Rented </small>
+              <a
+                ng-if="car.rented === 'false'"
+                data-ui-sref="rents.create({ carId: car._id })"
+                class="btn-success"
+              >
+                <small>Available</small>
+              </a>
+              <small class="btn-danger" ng-if="car.rented === 'true'">Rented</small>
+              <small ng-click="vm.cancelRent(car)" ng-if="car.rented === 'byLogged'" class="btn-warning">Cancel?</small>
+            </span>
+            <small ng-if="car.status === 'retired'">Unavailable</small>
           </div>
         </div>
       </div>

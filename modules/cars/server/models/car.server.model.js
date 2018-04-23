@@ -42,6 +42,11 @@ var CarSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'TariffGroup',
     required: [true, 'Tariff group must be entered']
+  },
+  status: {
+    type: String,
+    enum: ['in service', 'retired', 'being serviced'],
+    default: 'in service'
   }
 });
 

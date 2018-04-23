@@ -6,6 +6,9 @@
     <a ng-show="vm.car._id" class="btn btn-primary" ng-click="vm.remove()">
       <i class="glyphicon glyphicon-trash"></i>
     </a>
+    <a ng-show="vm.car._id && vm.car.status !== 'retired'" class="btn btn-primary" ng-click="vm.retire()">
+      <i class="glyphicon glyphicon-remove-circle"></i>
+    </a>
   </div>
   <div class="col-md-12">
     <form name="vm.form.carForm" class="form-horizontal" ng-submit="vm.save(vm.form.carForm.$valid)" novalidate>

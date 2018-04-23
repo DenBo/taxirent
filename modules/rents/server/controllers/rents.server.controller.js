@@ -7,6 +7,7 @@ var path = require('path'),
   mongoose = require('mongoose'),
   Rent = mongoose.model('Rent'),
   ActiveRent = mongoose.model('ActiveRent'),
+  carsCtrl = require(path.resolve('./modules/cars/server/controllers/cars.server.controller')),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
 /**
@@ -34,25 +35,48 @@ exports.create = function (req, res) {
           });
         }
       }
-      rent.save(function (err) {
-        if (err) {
-          return res.status(422).send({
-            message: errorHandler.getErrorMessage(err)
-          });
-        } else {
-          var activeRent = new ActiveRent();
-          activeRent.rent = rent;
-          activeRent.save(function (err) {
+
+      carsCtrl.carByID_S(rent.car).then(
+        function (car) {
+          if (!car) {
+            return res.status(422).send({
+              message: 'Car associated with received rent could not be found'
+            });
+          }
+
+          // Check if car is retired
+          if (car.status === 'retired') {
+            return res.status(422).send({
+              message: 'Retired car cannot be rented'
+            });
+          }
+
+          rent.save(function (err) {
             if (err) {
               return res.status(422).send({
                 message: errorHandler.getErrorMessage(err)
               });
             } else {
-              res.json(rent);
+              var activeRent = new ActiveRent();
+              activeRent.rent = rent;
+              activeRent.save(function (err) {
+                if (err) {
+                  return res.status(422).send({
+                    message: errorHandler.getErrorMessage(err)
+                  });
+                } else {
+                  res.json(rent);
+                }
+              });
             }
           });
+        },
+        function (err) {
+          return res.status(422).send({
+            message: errorHandler.getErrorMessage(err)
+          });
         }
-      });
+      );
     }
   });
 };

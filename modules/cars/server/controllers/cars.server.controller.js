@@ -6,6 +6,7 @@
 var path = require('path'),
   mongoose = require('mongoose'),
   Car = mongoose.model('Car'),
+  ActiveRent = mongoose.model('ActiveRent'),
   globalVarsCtrl = require(path.resolve('./modules/globalvars/server/controllers/globalvars.server.controller')),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
@@ -137,15 +138,48 @@ exports.update = function (req, res) {
   car.maxSpeed = req.body.maxSpeed;
   car.tariffGroup = req.body.tariffGroup;
 
-  car.save(function (err) {
-    if (err) {
-      return res.status(422).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.json(car);
+  // If car is being retired check if it is rented at the moment
+  if (car.status !== 'retired' && req.body.status === 'retired') {
+    car.status = req.body.status;
+    ActiveRent.find().populate('rent').exec().then(succActiveRentsCbk, errActiveRentsCbk);
+  } else {
+    car.status = req.body.status;
+    car.save(function (err) {
+      if (err) {
+        return res.status(422).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        res.json(car);
+      }
+    });
+  }
+
+  function succActiveRentsCbk(activeRents) {
+    for (let i = 0; i < activeRents.length; i++) {
+      if (activeRents[i].rent.car.equals(car._id)) {
+        return res.status(422).send({
+          message: 'Cannot retire a rented car'
+        });
+      }
     }
-  });
+
+    car.save(function (err) {
+      if (err) {
+        return res.status(422).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        res.json(car);
+      }
+    });
+  }
+
+  function errActiveRentsCbk(err) {
+    return res.status(422).send({
+      message: errorHandler.getErrorMessage(err)
+    });
+  }
 };
 
 /**
@@ -214,7 +248,7 @@ exports.carByID = function (req, res, next, id) {
  * Get car by id on server
  */
 exports.carByID_S = function (carId) {
-  let query = Car.findById(carId).select('tariffGroup').populate({
+  let query = Car.findById(carId).select('tariffGroup status').populate({
     path: 'tariffGroup',
     populate: {
       path: 'tariffs',
