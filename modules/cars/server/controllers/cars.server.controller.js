@@ -6,6 +6,7 @@
 var path = require('path'),
   mongoose = require('mongoose'),
   Car = mongoose.model('Car'),
+  globalVarsCtrl = require(path.resolve('./modules/globalvars/server/controllers/globalvars.server.controller')),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
 let carNames = [
@@ -59,26 +60,54 @@ let carImages = [
  */
 exports.create = function (req, res) {
 
-  var car = new Car(req.body);
+  globalVarsCtrl.getProfit_S().then(
+    function (globalVar) {
+      let profit = globalVar.profit;
 
-  if (req.body.random && req.body.random === true) {
-    car.name = carNames[Math.floor(Math.random() * carNames.length)];
-    car.image = carImages[Math.floor(Math.random() * carImages.length)];
-    car.dateManufactured = randomDate(new Date(2000, 0, 1), new Date());
-    car.maxPassengers = Math.floor((Math.random() * 6) + 4);
-    car.maxSpeed = Math.floor((Math.random() * 280) + 140);
-    car.tariffGroup = '5ac4e29aaa293c1af8dc94de';
-  }
+      if (profit < 100) {
+        return res.status(422).send({
+          message: 'Insufficient funds to buy a car'
+        });
+      }
+      // TODO: After checking funds profit should be locked until
+      // this transaction finishes
+      var car = new Car(req.body);
 
-  car.save(function (err) {
-    if (err) {
+      if (req.body.random && req.body.random === true) {
+        car.name = carNames[Math.floor(Math.random() * carNames.length)];
+        car.image = carImages[Math.floor(Math.random() * carImages.length)];
+        car.dateManufactured = randomDate(new Date(2000, 0, 1), new Date());
+        car.maxPassengers = Math.floor((Math.random() * 6) + 4);
+        car.maxSpeed = Math.floor((Math.random() * 280) + 140);
+        car.tariffGroup = '5ac4e29aaa293c1af8dc94de';
+      }
+
+      car.save(function (err) {
+        if (err) {
+          return res.status(422).send({
+            message: errorHandler.getErrorMessage(err)
+          });
+        } else {
+          // TODO: car price can be stored in database
+          globalVarsCtrl.addToProfit_S(-10000).then(
+            function () {
+              res.json(car);
+            },
+            function (err) {
+              return res.status(422).send({
+                message: errorHandler.getErrorMessage(err)
+              });
+            }
+          );
+        }
+      });
+    },
+    function (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)
       });
-    } else {
-      res.json(car);
     }
-  });
+  );
 };
 
 function randomDate(start, end) {

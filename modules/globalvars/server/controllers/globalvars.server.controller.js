@@ -113,6 +113,10 @@ exports.delete = function (req, res) {
 /**
  * Functions for profit property
  */
+
+ /**
+ * Get profit
+ */
 exports.getProfit = function (req, res) {
   GlobalVar.findOne().select('profit -_id').exec(function (err, globalVar) {
     if (err) {
@@ -135,6 +139,34 @@ exports.getProfit = function (req, res) {
         res.json(globalVar);
       }
     }
+  });
+};
+
+/**
+ * Get profit on server
+ */
+exports.getProfit_S = function () {
+  return new Promise((resolve, reject) => {
+    let query = GlobalVar.findOne().select('profit -_id');
+
+    query.exec(function (err, globalVar) {
+      if (err) {
+        return reject(err);
+      } else {
+        if (!globalVar) {
+          globalVar = new GlobalVar();
+          globalVar.save(function (err) {
+            if (err) {
+              return reject(err);
+            } else {
+              return resolve(globalVar);
+            }
+          });
+        } else {
+          return resolve(globalVar);
+        }
+      }
+    });
   });
 };
 
