@@ -21,6 +21,11 @@
     $interval(display, 10000); // Refresh data from db on regular interval
 
     function display() {
+      displayCarsAndCarInfo();
+      displayAvgProfitPerHr();
+    }
+
+    function displayCarsAndCarInfo() {
       return Promise.all([
         CarsService.query().$promise,
         ActiveRentsService.query().$promise,
@@ -80,6 +85,17 @@
 
     function convertDate(date) {
       return new Date(date);
+    }
+
+    function displayAvgProfitPerHr() {
+      RentsService.ProfitStats.get().$promise.then(
+        function (rentProfitSum) {
+          vm.profitLastHour = (rentProfitSum.profit / 100) + ' €/min';
+        },
+        function (err) {
+          Notification.error({ message: '<i class="glyphicon glyphicon-ok"></i> An error has occured!' });
+        }
+      );
     }
 
   /**

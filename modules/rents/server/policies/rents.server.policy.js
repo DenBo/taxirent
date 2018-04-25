@@ -26,6 +26,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/rents/car_usage',
       permissions: ['get']
+    }, {
+      resources: '/api/rents/avgProfitPerHr',
+      permissions: ['get']
     }]
   }, {
     roles: ['user'],
@@ -43,6 +46,9 @@ exports.invokeRolesPolicies = function () {
       permissions: ['post']
     }, {
       resources: '/api/rents/car_usage',
+      permissions: ['get']
+    }, {
+      resources: '/api/rents/avgProfitPerHr',
       permissions: ['get']
     }]
   }]);

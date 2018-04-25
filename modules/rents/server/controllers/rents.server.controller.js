@@ -213,6 +213,43 @@ exports.countCars = function (req, res) {
 };
 
 /**
+ * Average profit per last 60 minutes
+ */
+exports.avgProfitPerHr = function (req, res) {
+  let dateNow = new Date();
+  let date60MinsAgo = new Date();
+  date60MinsAgo.setSeconds(dateNow.getSeconds() - 3600);
+  Rent
+  .aggregate([
+    {
+      $match: {
+        dateEnded: {
+          $gte: date60MinsAgo,
+          $lte: dateNow
+        }
+      }
+    }, {
+      $group: {
+        _id: null,
+        profit: {
+          $sum: '$profit'
+        }
+      }
+    }
+  ])
+  .exec(function (err, rents) {
+    if (err) {
+      return res.status(422).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      rents[0].profit /= 60;
+      return res.json(rents[0]);
+    }
+  });
+};
+
+/**
  * Rent middleware
  */
 exports.rentByID = function (req, res, next, id) {

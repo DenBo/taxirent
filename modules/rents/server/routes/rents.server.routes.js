@@ -16,7 +16,10 @@ module.exports = function (app) {
     .post(rents.byCar);
 
   app.route('/api/rents/car_usage').all(rentsPolicy.isAllowed)
-  .get(rents.countCars);
+    .get(rents.countCars);
+
+  app.route('/api/rents/avgProfitPerHr').all(rentsPolicy.isAllowed)
+    .get(rents.avgProfitPerHr);
 
   // Single rent routes
   app.route('/api/rents/:rentId').all(rentsPolicy.isAllowed)

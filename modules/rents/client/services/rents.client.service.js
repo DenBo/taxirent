@@ -35,6 +35,9 @@
         ),
         CarUsageStats: $resource(
           '/api/rents/car_usage'
+        ),
+        ProfitStats: $resource(
+          '/api/rents/avgProfitPerHr'
         )
       };
 
