@@ -243,8 +243,12 @@ exports.avgProfitPerHr = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      rents[0].profit /= 60;
-      return res.json(rents[0]);
+      if (rents && rents.length > 0) {
+        rents[0].profit /= 60;
+        return res.json(rents[0]);
+      } else {
+        return res.json({ _id: null, profit: 0 });
+      }
     }
   });
 };
