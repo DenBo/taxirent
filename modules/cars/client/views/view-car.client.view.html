@@ -22,7 +22,7 @@
         <td ng-bind="rent.dateStarted | date:'MM.dd.yyyy HH:mm'"></td>
         <td ng-bind="rent.dateEnded | date:'MM.dd.yyyy HH:mm'"></td>
         <td ng-bind="rent.duration"></td>
-        <td ng-bind="rent.profit | currency:'€':2"></td>
+        <td ng-bind="rent.profit/100 | currency:'€':2"></td>
       </tr>
     </table>
   </div>

@@ -8,25 +8,37 @@
   RentsService.$inject = ['$resource', '$log'];
 
   function RentsService($resource, $log) {
-    var Rent = $resource('/api/rents/:rentId', {
-      rentId: '@_id'
-    }, {
-      update: {
-        method: 'PUT'
-      },
-      getByCarId: {
-        method: 'POST',
-        params: {
-          rentId: 'bycar'
-        },
-        isArray: true,
-        hasBody: true,
-        requestType: 'json',
-        responseType: 'json'
-      }
-    });
 
-    angular.extend(Rent.prototype, {
+    var Rent =
+      {
+        Basic: $resource(
+          '/api/rents/:rentId',
+          {
+            rentId: '@_id'
+          },
+          {
+            update: {
+              method: 'PUT'
+            },
+            getByCarId:
+            {
+              method: 'POST',
+              params: {
+                rentId: 'bycar'
+              },
+              isArray: true,
+              hasBody: true,
+              requestType: 'json',
+              responseType: 'json'
+            }
+          }
+        ),
+        CarUsageStats: $resource(
+          '/api/rents/car_usage'
+        )
+      };
+
+    angular.extend(Rent.Basic.prototype, {
       createOrUpdate: function () {
         var rent = this;
         return createOrUpdate(rent);

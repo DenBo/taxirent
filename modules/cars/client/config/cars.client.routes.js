@@ -46,7 +46,7 @@
   getRents.$inject = ['$stateParams', 'RentsService'];
 
   function getRents($stateParams, RentsService) {
-    return RentsService.getByCarId({}, {
+    return RentsService.Basic.getByCarId({}, {
       carId: $stateParams.carId
     }).$promise;
   }

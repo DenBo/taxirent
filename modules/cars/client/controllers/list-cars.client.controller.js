@@ -5,41 +5,77 @@
     .module('cars')
     .controller('CarsListController', CarsListController);
 
-  CarsListController.$inject = ['$scope', '$state', '$window', '$interval', 'CarsService', 'ActiveRentsService', 'Authentication', 'Notification'];
+  CarsListController.$inject = ['$scope', '$state', '$window', '$interval', 'CarsService', 'ActiveRentsService', 'RentsService', 'Authentication', 'Notification'];
 
-  function CarsListController($scope, $state, $window, $interval, CarsService, ActiveRentsService, Authentication, Notification) {
+  function CarsListController($scope, $state, $window, $interval, CarsService, ActiveRentsService, RentsService, Authentication, Notification) {
     var vm = this;
 
     vm.cars = {};
     vm.cancelRent = cancelRent;
+    vm.nRentedCars = 0;
+    vm.mostRentedCar = '?';
+    vm.profitLastHour = '? €/min';
 
     display();
 
-    $interval(display, 2000); // Refresh data from db on regular interval
+    $interval(display, 10000); // Refresh data from db on regular interval
 
     function display() {
       return Promise.all([
         CarsService.query().$promise,
-        ActiveRentsService.query().$promise
-      ])
-      .then(function (values) {
-        vm.cars = values[0];
-        let activeRents = values[1];
+        ActiveRentsService.query().$promise,
+        RentsService.CarUsageStats.query().$promise
+      ]).then(displaySuccCbk, displayErrCbk);
+    }
 
-        angular.forEach(vm.cars, function (car) {
-          car.rented = 'false';
-          angular.forEach(activeRents, function (activeRent) {
-            if (car._id === activeRent.rent.car) {
-              car.rented = 'true';
-              if (activeRent.rent.customer.username === Authentication.user.username) {
-                car.rented = 'byLogged';
-                car.activeRent = activeRent;  // For cancelling
-              }
+    function displaySuccCbk(values) {
+      vm.cars = values[0];
+      let activeRents = values[1];
+      let carUsage = values[2];
+
+      // Check for each car if it is rented and add property
+      // to it so that view can show it
+      angular.forEach(vm.cars, function (car) {
+        car.rented = 'false';
+        angular.forEach(activeRents, function (activeRent) {
+          if (car._id === activeRent.rent.car) {
+            car.rented = 'true';
+            // Guest will have username null
+            if (Authentication.user && Authentication.user.username && activeRent.rent.customer.username === Authentication.user.username) {
+              car.rented = 'byLogged';
+              car.activeRent = activeRent;  // For cancelling
             }
-          });
+          }
         });
-        $scope.$apply();
       });
+
+      // Count number of rented cars
+      // TODO: Has to be adjusted if client can rent more than
+      // one car at a time
+      let n = 0;
+      angular.forEach(activeRents, function (activeRent) {
+        n++;
+      });
+      vm.nRentedCars = n;
+
+      // Find out the most used car
+      let mostRents = Math.max.apply(Math, carUsage.map(function (o) {
+        return o.totalRents;
+      }));
+      var car = carUsage.find(function (o) {
+        return o.totalRents === mostRents;
+      });
+      // Currently car object only has id and number of rents
+      car = vm.cars.find(function (o) {
+        return o._id === car._id;
+      });
+      vm.mostRentedCar = car.name;
+
+      $scope.$apply();
+    }
+
+    function displayErrCbk(err) {
+      Notification.error({ message: '<i class="glyphicon glyphicon-ok"></i> An error has occured!' });
     }
 
     function convertDate(date) {

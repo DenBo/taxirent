@@ -193,6 +193,26 @@ exports.byCar = function (req, res) {
 };
 
 /**
+ * List of cars and number of times they were rented
+ */
+exports.countCars = function (req, res) {
+  Rent.aggregate(
+    { $group:
+      { _id: '$car', totalRents: { $sum: 1 } }
+    },
+    function (err, aggResult) {
+      if (err) {
+        return res.status(500).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        res.json(aggResult);
+      }
+    }
+  );
+};
+
+/**
  * Rent middleware
  */
 exports.rentByID = function (req, res, next, id) {

@@ -20,7 +20,7 @@
       for (var i = 0; i < vm.rents.length; i++) {
         sum += vm.rents[i].profit;
       }
-      return sum;
+      return sum/100;
     }
   }
 }());

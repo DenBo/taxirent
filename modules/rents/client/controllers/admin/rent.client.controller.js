@@ -12,13 +12,11 @@
 
     vm.rent = rent;
     vm.car = car;
-    vm.car.tariffGroup.tariffs.sort(compareTariffs);
     vm.duration = vm.duration ? parseDate(vm.rent.duration) : vm.duration;
     vm.authentication = Authentication;
     vm.form = {};
     vm.remove = remove;
     vm.save = save;
-    vm.getPrice = getPrice;
 
     // Remove existing Rent
     function remove() {
@@ -38,10 +36,12 @@
         return false;
       }
 
-      vm.rent.dateStarted = new Date();
+      vm.rent.dateStarted = new Date(); // TODO: add field
       vm.rent.customer = vm.authentication.user;   // In case of new rent
       vm.rent.car = vm.car;   // In case of new rent
       vm.rent.duration = getDuration(vm.duration);
+      vm.rent.dateEnded = new Date(); // TODO: add field
+      vm.rent.profit = 0; // TODO: add field
 
       // Create a new rent, or update the current instance
       vm.rent.createOrUpdate()
@@ -77,38 +77,6 @@
       return date.getHours() * 3600 +
       date.getMinutes() * 60 +
       date.getSeconds();
-    }
-
-    function getPrice() {
-      var price = 0;
-      var prev_tariff_t = 0;
-      var dur = getDuration(vm.duration);
-
-      for (var i = 0; i < vm.car.tariffGroup.tariffs.length; i++) {
-        var pricePerSec = vm.car.tariffGroup.tariffs[i].price;
-        // If this is last specified tariff apply its price to all remaining duration
-        if (i === vm.car.tariffGroup.tariffs.length - 1) {
-          price += dur * pricePerSec;
-          return price;
-        }
-        var tariffDur = vm.car.tariffGroup.tariffs[i + 1].activeAfter - vm.car.tariffGroup.tariffs[i].activeAfter;
-        // If duration does not reach next tariff also apply all remaining duration
-        if (dur <= tariffDur) {
-          price += dur * pricePerSec;
-          return price;
-        }
-        price += tariffDur * pricePerSec;
-        dur -= tariffDur;
-      }
-      return price;
-    }
-
-    function compareTariffs(a, b) {
-      if (a.activeAfter < b.activeAfter)
-        return -1;
-      if (a.activeAfter > b.activeAfter)
-        return 1;
-      return 0;
     }
   }
 }());

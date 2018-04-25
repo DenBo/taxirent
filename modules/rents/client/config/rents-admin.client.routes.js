@@ -54,7 +54,7 @@
   getRent.$inject = ['$stateParams', 'RentsService'];
 
   function getRent($stateParams, RentsService) {
-    return RentsService.get({
+    return RentsService.Basic.get({
       rentId: $stateParams.rentId
     }).$promise;
   }
@@ -62,7 +62,7 @@
   newRent.$inject = ['RentsService'];
 
   function newRent(RentsService) {
-    return new RentsService();
+    return new RentsService.Basic();
   }
 
   getCar.$inject = ['$stateParams', 'CarsService'];

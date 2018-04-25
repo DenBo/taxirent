@@ -75,11 +75,11 @@ exports.create = function (req, res) {
       var car = new Car(req.body);
 
       if (req.body.random && req.body.random === true) {
-        car.name = carNames[Math.floor(Math.random() * carNames.length)];
-        car.image = carImages[Math.floor(Math.random() * carImages.length)];
+        car.name = carNames[randomIntFromInterval(0, carNames.length - 1)];
+        car.image = carImages[randomIntFromInterval(0, carImages.length - 1)];
         car.dateManufactured = randomDate(new Date(2000, 0, 1), new Date());
-        car.maxPassengers = Math.floor((Math.random() * 6) + 4);
-        car.maxSpeed = Math.floor((Math.random() * 280) + 140);
+        car.maxPassengers = randomIntFromInterval(4, 6);
+        car.maxSpeed = randomIntFromInterval(140, 280);
         car.tariffGroup = '5ac4e29aaa293c1af8dc94de';
       }
 
@@ -110,6 +110,10 @@ exports.create = function (req, res) {
     }
   );
 };
+
+function randomIntFromInterval(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
 
 function randomDate(start, end) {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));

@@ -10,6 +10,6 @@
   function RentsAdminListController(RentsService) {
     var vm = this;
 
-    vm.rents = RentsService.query();
+    vm.rents = RentsService.Basic.query();
   }
 }());

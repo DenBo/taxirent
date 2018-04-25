@@ -23,6 +23,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/rents/bycar',
       permissions: '*'
+    }, {
+      resources: '/api/rents/car_usage',
+      permissions: ['get']
     }]
   }, {
     roles: ['user'],
@@ -38,6 +41,9 @@ exports.invokeRolesPolicies = function () {
     allows: [{
       resources: '/api/rents/bycar',
       permissions: ['post']
+    }, {
+      resources: '/api/rents/car_usage',
+      permissions: ['get']
     }]
   }]);
 };
