@@ -15,6 +15,7 @@
     vm.nRentedCars = 0;
     vm.mostRentedCar = '?';
     vm.profitLastHour = '? €/min';
+    vm.displayChart = displayChart;
 
     display();
     displayChart();
