@@ -17,12 +17,60 @@
     vm.profitLastHour = '? €/min';
 
     display();
+    displayChart();
 
     $interval(display, 10000); // Refresh data from db on regular interval
 
     function display() {
       displayCarsAndCarInfo();
       displayAvgProfitPerHr();
+    }
+
+    function displayChart() {
+      RentsService.RentsGraphAll.get().$promise.then(
+        function (data) {
+
+          let timeZoneOffset = new Date().getTimezoneOffset();
+          let chartStartDate = new Date(data.startDate);
+          chartStartDate.setMinutes(chartStartDate.getMinutes() - timeZoneOffset);
+          let chartStartDateUTC = convertDateToUTC(chartStartDate);
+
+          // Create the chart
+          var rentsLast3HrsChart = Highcharts.chart('container', {
+            chart: {
+              type: 'area'
+            },
+            title: {
+              text: 'Rents'
+            },
+            xAxis: {
+              type: 'datetime',
+              title: {
+                text: 'time'
+              }
+            },
+            yAxis: {
+              title: {
+                text: 'number of rents'
+              }
+            },
+            series: [{
+              name: 'rents',
+              data: data.yAxis,
+              pointStart: chartStartDateUTC,
+              pointInterval: 60 * 1000 // Every minute
+            }]
+          });
+        },
+        function (err) {
+          Notification.error({ message: '<i class="glyphicon glyphicon-ok"></i> Error while getting graph data!' });
+        }
+      );
+    }
+
+    function convertDateToUTC(date) {
+      return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
+      date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
     }
 
     function displayCarsAndCarInfo() {

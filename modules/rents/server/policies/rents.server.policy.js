@@ -29,6 +29,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/rents/avgProfitPerHr',
       permissions: ['get']
+    }, {
+      resources: '/api/rents/nRentsLast3Hrs',
+      permissions: ['get']
     }]
   }, {
     roles: ['user'],
@@ -49,6 +52,9 @@ exports.invokeRolesPolicies = function () {
       permissions: ['get']
     }, {
       resources: '/api/rents/avgProfitPerHr',
+      permissions: ['get']
+    }, {
+      resources: '/api/rents/nRentsLast3Hrs',
       permissions: ['get']
     }]
   }]);

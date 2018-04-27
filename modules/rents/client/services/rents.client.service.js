@@ -38,6 +38,13 @@
         ),
         ProfitStats: $resource(
           '/api/rents/avgProfitPerHr'
+        ),
+        RentsGraphAll: $resource(
+          '/api/rents/nRentsLast3Hrs', {
+            method: 'GET',
+            isArray: false,
+            responseType: 'json'
+          }
         )
       };
 

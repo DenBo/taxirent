@@ -253,6 +253,113 @@ exports.avgProfitPerHr = function (req, res) {
   });
 };
 
+exports.nRentsLast3Hrs = function (req, res) {
+  let dateNow = new Date();
+  let date3HrsAgo = new Date();
+  date3HrsAgo.setSeconds(dateNow.getSeconds() - 10800);
+  // Because of the following problem all seconds must be set to zero:
+  // Graph one refresh:
+  // Rent 0: 13:35:51 <= 13:36:15 <= 13:36:51 at 144
+  // Rent 1: 13:36:16 <= 13:37:15 <= 13:38:16 at 145
+  // Rent 1: 13:36:16 <= 13:38:15 <= 13:38:16 at 146
+  // Rent 2: 13:45:2 <= 13:45:15 <= 13:46:2 at 153
+  // Graph at another refresh:
+  // Rent 0: 13:35:51 <= 13:36:17 <= 13:36:51 at 144
+  // Rent 1: 13:36:16 <= 13:36:17 <= 13:38:16 at 144
+  // Rent 1: 13:36:16 <= 13:37:17 <= 13:38:16 at 145
+  // Rent 2: 13:45:2 <= 13:45:17 <= 13:46:2 at 153
+  // 13:36:15 at one refresh, 13:36:17 at another, while
+  // rent is at 16 seconds
+  // Result was that graph was changing between refreshes in
+  // weird ways
+  date3HrsAgo.setSeconds(0);
+  dateNow.setSeconds(0);
+  Rent
+  .aggregate([
+    {
+      $project: {
+        dateEnded: {
+          $ifNull: ['$dateEnded', new Date()]
+        },
+        dateStarted: true
+      }
+    },
+    {
+      $match: {
+        $and: [
+          {
+            dateEnded: {
+              $gte: date3HrsAgo
+            }
+          },
+          {
+            dateStarted: {
+              $lte: dateNow
+            }
+          }
+        ]
+      }
+    }
+  ])
+  .exec(function (err, rents) {
+    if (err) {
+      return res.status(422).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      if (!rents) {
+        return res.json({
+          yAxis: [],
+          startDate: date3HrsAgo
+        });
+      }
+      // Fill array with zeros on Y axis and prepare X axis
+      // let data = [];
+      // for (let i = 0; i < 180; i++) {
+        //data.push([new Date(date3HrsAgo), 0]);
+        //data[i][0].setSeconds(data[i][0].getSeconds() + (i * 60));
+      // }
+      let data = Array.apply(null, Array(180)).map(Number.prototype.valueOf, 0);
+      for (let i = 0; i < rents.length; i++) {
+        let rent = rents[i];
+        // If rent hasnt finished yet set temporary end now
+        if (!rent.dateEnded) {
+          rent.dateEnded = dateNow;
+        }
+        rent.dateStarted.setSeconds(0);
+        rent.dateEnded.setSeconds(0);
+
+        let currentGraphPos = new Date(date3HrsAgo);
+        for (var j = 0; j < 180; j++) {
+          // Move along X axis (time) and check if rent is still active
+          // If rent is still active at this point ...
+          if (
+            currentGraphPos.getTime() >= rent.dateStarted.getTime() &&
+            currentGraphPos.getTime() <= rent.dateEnded.getTime()
+          ) {
+            // ... increase number of active rents at this point
+            // data[j][1] += 1;
+            data[j] += 1;
+          }
+          currentGraphPos.setSeconds(currentGraphPos.getSeconds() + 60);
+        }
+      }
+      return res.json({
+        yAxis: data,
+        startDate: date3HrsAgo
+      });
+    }
+  });
+};
+
+// function debugPrint(i, a, x, b, j) {
+//   console.log('Rent ' + i + ': ' + printTime(a) + ' <= ' + printTime(x) + ' <= ' + printTime(b) + ' at ' + j);
+// }
+
+// function printTime(d) {
+//   return d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+// }
+
 /**
  * Rent middleware
  */
