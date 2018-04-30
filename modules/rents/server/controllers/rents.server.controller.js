@@ -316,16 +316,16 @@ exports.nRentsLast3Hrs = function (req, res) {
       // Fill array with zeros on Y axis and prepare X axis
       // let data = [];
       // for (let i = 0; i < 180; i++) {
-        //data.push([new Date(date3HrsAgo), 0]);
-        //data[i][0].setSeconds(data[i][0].getSeconds() + (i * 60));
+        // data.push([new Date(date3HrsAgo), 0]);
+        // data[i][0].setSeconds(data[i][0].getSeconds() + (i * 60));
       // }
       let data = Array.apply(null, Array(180)).map(Number.prototype.valueOf, 0);
       for (let i = 0; i < rents.length; i++) {
         let rent = rents[i];
-        // If rent hasnt finished yet set temporary end now
-        if (!rent.dateEnded) {
-          rent.dateEnded = dateNow;
-        }
+        // If rent hasnt finished yet set temporary end now - done by Mongoose
+        // if (!rent.dateEnded) {
+        //   rent.dateEnded = dateNow;
+        // }
         rent.dateStarted.setSeconds(0);
         rent.dateEnded.setSeconds(0);
 
@@ -348,6 +348,107 @@ exports.nRentsLast3Hrs = function (req, res) {
         yAxis: data,
         startDate: date3HrsAgo
       });
+    }
+  });
+};
+
+exports.nRentsPerCar = function (req, res) {
+  // TODO: why is entire car object among req?
+  let dateNow = new Date();
+  let date1WeekAgo = new Date();
+  dateNow.setSeconds(0);
+  date1WeekAgo.setSeconds(dateNow.getSeconds() - 604800);
+  let carId = mongoose.Types.ObjectId(req.params.carId);
+  Rent
+  .aggregate([
+    {
+      $project: {
+        dateEnded: {
+          $ifNull: ['$dateEnded', dateNow]
+        },
+        dateStarted: true,
+        car: true,
+        duration: true // TODO: REMOVE AFTER DEBUGGING
+      }
+    },
+    {
+      $match: {
+        $and: [
+          {
+            dateEnded: {
+              $gte: date1WeekAgo
+            }
+          }, {
+            dateStarted: {
+              $lte: dateNow
+            }
+          }, {
+            car: carId
+          }
+        ]
+      }
+    }
+  ])
+  .exec(function (err, rents) {
+    if (err) {
+      return res.status(422).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      if (!rents) {
+        return res.json({ graphData: {} });
+      }
+      let data = {};
+      for (let i = 0; i < rents.length; i++) {
+        let rent = rents[i];
+        rent.dateStarted.setSeconds(0);
+        rent.dateEnded.setSeconds(0);
+
+        let commonIntervalDuration = 1;
+        let commonIntervalStart;
+        let commonIntervalEnd;
+        let sectionStart = new Date(rent.dateStarted);
+        sectionStart.setMinutes(0);
+        sectionStart.setSeconds(0);
+        let sectionEnd = new Date(sectionStart);
+        sectionEnd.setSeconds(sectionEnd.getSeconds() + 3600);
+        console.log('Rent start: ' + rent.dateStarted);
+        console.log('Rent end: ' + rent.dateEnded);
+
+        while (true) {
+          console.log('Section start: ' + sectionStart);
+          console.log('Section end: ' + sectionEnd);
+
+          if (rent.dateStarted > sectionStart) {
+            commonIntervalStart = rent.dateStarted;
+          } else {
+            commonIntervalStart = sectionStart;
+          }
+          if (rent.dateEnded < sectionEnd) {
+            commonIntervalEnd = rent.dateEnded;
+          } else {
+            commonIntervalEnd = sectionEnd;
+          }
+          console.log('Common start: ' + commonIntervalStart);
+          console.log('Common end: ' + commonIntervalEnd);
+          commonIntervalDuration = (commonIntervalEnd.getTime() - commonIntervalStart.getTime()) / 1000;
+          if (commonIntervalDuration < 1) {
+            break;
+          }
+          if (data[sectionStart]) {
+            data[sectionStart] += commonIntervalDuration / 36;
+          } else {
+            data[sectionStart] = commonIntervalDuration / 36;
+          }
+          console.log(commonIntervalDuration);
+          sectionStart.setSeconds(sectionStart.getSeconds() + 3600);
+          sectionEnd.setSeconds(sectionEnd.getSeconds() + 3600);
+        }
+        console.log('Rent duration: ' + rent.duration);
+        console.log('------------------');
+      }
+      console.log(data);
+      return res.json({ graphData: data });
     }
   });
 };

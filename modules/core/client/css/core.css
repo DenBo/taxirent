@@ -41,3 +41,11 @@ a:hover .header-profile-image {
 .has-error .help-inline.error-text {
   display: inline;
 }
+
+.crop-text {
+  text-overflow: ellipsis;
+  overflow: hidden; 
+  width: 102px; 
+  height: 1.2em; 
+  white-space: nowrap;
+}

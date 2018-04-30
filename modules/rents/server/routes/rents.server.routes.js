@@ -24,6 +24,9 @@ module.exports = function (app) {
   app.route('/api/rents/nRentsLast3Hrs').all(rentsPolicy.isAllowed)
     .get(rents.nRentsLast3Hrs);
 
+  app.route('/api/rents/nRentsPerCar/:carId').all(rentsPolicy.isAllowed)
+  .get(rents.nRentsPerCar);
+
   // Single rent routes
   app.route('/api/rents/:rentId').all(rentsPolicy.isAllowed)
     .get(rents.read)

@@ -40,7 +40,16 @@
           '/api/rents/avgProfitPerHr'
         ),
         RentsGraphAll: $resource(
-          '/api/rents/nRentsLast3Hrs', {
+          '/api/rents/nRentsLast3Hrs',
+          {
+            method: 'GET',
+            isArray: false,
+            responseType: 'json'
+          }
+        ),
+        RentsGraphCar: $resource(
+          '/api/rents/nRentsPerCar/:carId',
+          {
             method: 'GET',
             isArray: false,
             responseType: 'json'

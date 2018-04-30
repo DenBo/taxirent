@@ -4,7 +4,7 @@
     <img class="img-thumbnail user-profile-picture" ng-if="vm.car.image != ''" ng-src="/modules/cars/client/img/car/uploads/{{vm.car.image}}">
  
     <h1 ng-bind="vm.car.name"></h1>
-
+    <button class="btn btn-default pull-right" ng-click="vm.displayChart()"><img src="/modules/core/client/img/display/refresh_graph.png" alt="Refresh graph"></button>
     <h3>Profit: {{ vm.getTotalProfit() | currency:'€':2 }}</h3>
   </div>
  

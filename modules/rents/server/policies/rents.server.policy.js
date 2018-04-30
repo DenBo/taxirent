@@ -32,6 +32,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/rents/nRentsLast3Hrs',
       permissions: ['get']
+    }, {
+      resources: '/api/rents/nRentsPerCar/:carId',
+      permissions: ['get']
     }]
   }, {
     roles: ['user'],
@@ -55,6 +58,9 @@ exports.invokeRolesPolicies = function () {
       permissions: ['get']
     }, {
       resources: '/api/rents/nRentsLast3Hrs',
+      permissions: ['get']
+    }, {
+      resources: '/api/rents/nRentsPerCar/:carId',
       permissions: ['get']
     }]
   }]);
