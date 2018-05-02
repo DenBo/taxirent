@@ -29,12 +29,23 @@
     function displayChart() {
       RentsService.RentsGraphCar.get({ carId: vm.car._id }).$promise.then(
         function (data) {
+          // Get edge points and adjust for correct timezone
+          let timeZoneOffset = new Date().getTimezoneOffset();
+          let chartStartDate = new Date(data.startDate);
+          let chartEndDate = new Date(data.endDate);
+          chartStartDate.setMinutes(chartStartDate.getMinutes() - timeZoneOffset);
+          chartEndDate.setMinutes(chartEndDate.getMinutes() - timeZoneOffset);
+          let chartStartDateUTC = convertDateToUTC(chartStartDate);
+          let chartEndDateUTC = convertDateToUTC(chartEndDate);
+
+          // Convert to format highcharts understands
+          // Convert object of graph points to array
           let graphData = data.graphData;
-          // console.log(data);
           let chartData = [];
           for (var key in graphData) {
             if (graphData.hasOwnProperty(key)) {
               let date = new Date(key);
+              date.setMinutes(date.getMinutes() - timeZoneOffset);
               // date.setMinutes(date.getMinutes() - timeZoneOffset);
               let dateUTC = convertDateToUTC(date);
               // console.log(date, graphData[key]);
@@ -42,13 +53,29 @@
             }
           }
           chartData.sort();
+          // Set unused points to 0, add data where present
+          let startJ = 0; // Prevent iterating through processed points
+          graphData = [];
+          let dateCounter = convertDateToUTC(chartStartDate);
+          let hrsInWeek = 168;
+          for (let i = 0; i < hrsInWeek; i++) {
+            let sum = 0;
+            for (let j = startJ; j < chartData.length; j++) {
+              if (dateCounter === chartData[j][0]) {
+                sum += chartData[j][1];
+                startJ++;
+              }
+            }
+            graphData.push([dateCounter, sum]);
+            dateCounter += (60 * 60 * 1000);
+          }
           // Create the chart
           var rentsLast3HrsChart = Highcharts.chart('container', {
             chart: {
-              type: 'area'
+              type: 'column'
             },
             title: {
-              text: 'Rents'
+              text: 'Rents past week'
             },
             xAxis: {
               type: 'datetime',
@@ -58,12 +85,28 @@
             },
             yAxis: {
               title: {
-                text: 'number of rents'
-              }
+                text: 'rented % of time'
+              },
+              max: 100,
+              min: 0
             },
+            tooltip: {
+              pointFormat: 'Rented: {point.y:.2f} %'
+            },
+            // rangeSelector: {
+            //   verticalAlign: 'top',
+            //   x: 0,
+            //   y: 0
+            // },
             series: [{
-              name: 'rents',
-              data: chartData
+              type: 'column',
+              name: '% time rented',
+              data: graphData,
+              // pointStart: chartStartDateUTC,
+              // pointEnd: chartEndDateUTC,
+              pointInterval: 60 * 60 * 1000, // Every hour
+              pointPadding: 0,
+              groupPadding: 0
             }]
           });
         },

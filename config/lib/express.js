@@ -68,7 +68,7 @@ module.exports.initMiddleware = function (app) {
 
   // Enable logger (morgan) if enabled in the configuration file
   if (_.has(config, 'log.format')) {
-    // app.use(morgan(logger.getLogFormat(), logger.getMorganOptions()));
+    app.use(morgan(logger.getLogFormat(), logger.getMorganOptions()));
   }
 
   // Environment dependent middleware

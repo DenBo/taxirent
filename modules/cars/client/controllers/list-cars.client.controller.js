@@ -42,7 +42,7 @@
               type: 'area'
             },
             title: {
-              text: 'Rents'
+              text: 'Rents past 3 hours'
             },
             xAxis: {
               type: 'datetime',

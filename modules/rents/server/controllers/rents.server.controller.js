@@ -355,9 +355,10 @@ exports.nRentsLast3Hrs = function (req, res) {
 exports.nRentsPerCar = function (req, res) {
   // TODO: why is entire car object among req?
   let dateNow = new Date();
-  let date1WeekAgo = new Date();
   dateNow.setSeconds(0);
-  date1WeekAgo.setSeconds(dateNow.getSeconds() - 604800);
+  dateNow.setMinutes(0);
+  let date1WeekAgo = new Date(dateNow);
+  date1WeekAgo.setSeconds(-604800);
   let carId = mongoose.Types.ObjectId(req.params.carId);
   Rent
   .aggregate([
@@ -396,7 +397,11 @@ exports.nRentsPerCar = function (req, res) {
       });
     } else {
       if (!rents) {
-        return res.json({ graphData: {} });
+        return res.json({
+          graphData: {},
+          startDate: date1WeekAgo,
+          endDate: dateNow
+        });
       }
       let data = {};
       for (let i = 0; i < rents.length; i++) {
@@ -412,13 +417,8 @@ exports.nRentsPerCar = function (req, res) {
         sectionStart.setSeconds(0);
         let sectionEnd = new Date(sectionStart);
         sectionEnd.setSeconds(sectionEnd.getSeconds() + 3600);
-        console.log('Rent start: ' + rent.dateStarted);
-        console.log('Rent end: ' + rent.dateEnded);
 
         while (true) {
-          console.log('Section start: ' + sectionStart);
-          console.log('Section end: ' + sectionEnd);
-
           if (rent.dateStarted > sectionStart) {
             commonIntervalStart = rent.dateStarted;
           } else {
@@ -429,8 +429,6 @@ exports.nRentsPerCar = function (req, res) {
           } else {
             commonIntervalEnd = sectionEnd;
           }
-          console.log('Common start: ' + commonIntervalStart);
-          console.log('Common end: ' + commonIntervalEnd);
           commonIntervalDuration = (commonIntervalEnd.getTime() - commonIntervalStart.getTime()) / 1000;
           if (commonIntervalDuration < 1) {
             break;
@@ -440,26 +438,18 @@ exports.nRentsPerCar = function (req, res) {
           } else {
             data[sectionStart] = commonIntervalDuration / 36;
           }
-          console.log(commonIntervalDuration);
           sectionStart.setSeconds(sectionStart.getSeconds() + 3600);
           sectionEnd.setSeconds(sectionEnd.getSeconds() + 3600);
         }
-        console.log('Rent duration: ' + rent.duration);
-        console.log('------------------');
       }
-      console.log(data);
-      return res.json({ graphData: data });
+      return res.json({
+        graphData: data,
+        startDate: date1WeekAgo,
+        endDate: dateNow
+      });
     }
   });
 };
-
-// function debugPrint(i, a, x, b, j) {
-//   console.log('Rent ' + i + ': ' + printTime(a) + ' <= ' + printTime(x) + ' <= ' + printTime(b) + ' at ' + j);
-// }
-
-// function printTime(d) {
-//   return d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-// }
 
 /**
  * Rent middleware
