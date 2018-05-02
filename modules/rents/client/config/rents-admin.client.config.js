@@ -9,9 +9,9 @@
   menuConfig.$inject = ['menuService'];
 
   function menuConfig(Menus) {
-    Menus.addSubMenuItem('topbar', 'admin', {
-      title: 'Manage Rents',
-      state: 'admin.rents.list'
-    });
+    // Menus.addSubMenuItem('topbar', 'admin', {
+    //   title: 'Manage Rents',
+    //   state: 'admin.rents.list'
+    // });
   }
 }());
