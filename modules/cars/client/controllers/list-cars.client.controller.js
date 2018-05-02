@@ -139,7 +139,7 @@
     function displayAvgProfitPerHr() {
       RentsService.ProfitStats.get().$promise.then(
         function (rentProfitSum) {
-          vm.profitLastHour = (rentProfitSum.profit / 100) + ' €/min';
+          vm.profitLastHour = (rentProfitSum.profit / 100).toFixed(2) + ' €/min';
         },
         function (err) {
           Notification.error({ message: '<i class="glyphicon glyphicon-ok"></i> An error has occured!' });
